@@ -35,20 +35,24 @@ public class DriveSub extends Subsystem {
   public double rateLeft;
   public double avgDistance;
   public double turningValue;
-  public static PWMVictorSPX leftOne = new PWMVictorSPX(RobotMap.left1);
-  public static PWMVictorSPX leftTwo = new PWMVictorSPX(RobotMap.left2);
-  public static SpeedControllerGroup Gleft = new SpeedControllerGroup(leftOne, leftTwo);
+  //public static PWMVictorSPX leftOne = new PWMVictorSPX(RobotMap.left1);
+  public static VictorSPX leftOne = new VictorSPX(RobotMap.left1);
+  //public static PWMVictorSPX leftTwo = new PWMVictorSPX(RobotMap.left2);
+  public static VictorSPX leftTwo = new VictorSPX(RobotMap.left2);
+  //OLD public static SpeedControllerGroup Gleft = new SpeedControllerGroup(leftOne, leftTwo);
   public double angle;
   public float roll;
   public float pitch;
   public double gyro;
   public static double kP = 0.15;
-  public static PWMVictorSPX rightOne = new PWMVictorSPX(RobotMap.right1);
-  public static PWMVictorSPX rightTwo = new PWMVictorSPX(RobotMap.right2);
-  public static SpeedControllerGroup Gright = new SpeedControllerGroup(rightOne, rightTwo);
+  //public static PWMVictorSPX rightOne = new PWMVictorSPX(RobotMap.right1);
+  public static VictorSPX rightOne = new VictorSPX(RobotMap.right1);
+  //public static PWMVictorSPX rightTwo = new PWMVictorSPX(RobotMap.right2);
+  public static VictorSPX rightTwo = new VictorSPX(RobotMap.right2);
+  //OLD public static SpeedControllerGroup Gright = new SpeedControllerGroup(rightOne, rightTwo);
   public static Encoder m_encoderRight = new Encoder(RobotMap.rightEncoderPort1, RobotMap.rightEncoderPort2, false, Encoder.EncodingType.k4X);
   public static Encoder m_encoderLeft = new Encoder(RobotMap.leftEncoderPort1, RobotMap.leftEncoderPort2, true, Encoder.EncodingType.k4X);
-  public static final DifferentialDrive DriveBase = new DifferentialDrive(Gleft, Gright);
+  //OLD public static final DifferentialDrive DriveBase = new DifferentialDrive(Gleft, Gright);
   public static VictorSPX centerMotor = new VictorSPX(RobotMap.center);
   public double minTurnSpeed = .45;
   public double zValue;
@@ -58,11 +62,52 @@ public class DriveSub extends Subsystem {
   public double yFactor = 1.2;
   public double zFactor = 1.5;
   public double rateAvg;
-  //public static ADXRS450_Gyro Gyro = new ADXRS450_Gyro(); 
+  public double forward;
+  public double turning;
+  public static double leftPower;
+  public static double rightPower;
+  // public static ADXRS450_Gyro Gyro = new ADXRS450_Gyro();
   public static AHRS Gyro = new AHRS(SPI.Port.kMXP);
+
+  // Redoing arcade drive, cause WPI is cruel
+  public static void betterArcadeDrive(double forward, double turning) {
+    forward = forward * forward * forward;
+    // Run motors in parallel
+    leftTwo.follow(leftOne);
+    rightTwo.follow(rightOne);
+
+    if (forward >= 0) {
+      leftPower = forward + turning;
+      rightPower = forward - turning;
+    } else if (forward < 0) {
+      leftPower = forward - turning;
+      rightPower = forward + turning;
+    }
+
+    if (leftPower > 1) {
+      leftPower = 1;
+    }
+
+    if (rightPower > 1) {
+      rightPower = 1;
+    }
+
+    if (leftPower < -1) {
+      leftPower = -1;
+    }
+
+    if (rightPower < -1) {
+      rightPower = -1;
+    }
+
+    leftOne.set(ControlMode.PercentOutput, leftPower);
+    rightOne.set(ControlMode.PercentOutput, -rightPower);
+    System.out.println(turning + " * " + leftPower + " * " + rightPower);
+  }
 
   public void robotDriver(Joystick joystickZero){
     // Experimental throttle curbve stuff -- Originall arcadeDeive line is below (commented out)
+
     yValue=joystickZero.getY();
     zValue=joystickZero.getZ();
     
@@ -85,7 +130,7 @@ public class DriveSub extends Subsystem {
     //This next line overrides all the other stuff and feeds straight joystic values.
     //zAdjustedValue=zValue;
     //Used to be adjusted value, changed to yValue to make it faster.
-    DriveBase.arcadeDrive(yValue * -1, zValue/2);
+    betterArcadeDrive(yValue * -1, zValue/2);
     //DriveBase.arcadeDrive(squareInput(-joystickZero.getY())/3, squareInput(joystickZero.getZ())/3);
     //centerMotor.setSpeed(-joystickZero.getX()/2);
     centerMotor.set(ControlMode.PercentOutput, joystickZero.getX());
@@ -157,22 +202,22 @@ public class DriveSub extends Subsystem {
 
 
   public void driveForward(double speed){
-    double strturningValue = (0 - Gyro.getAngle()) * kP;
+    //double strturningValue = (0 - Gyro.getAngle()) * kP;
     //Invert the direction of the turn if we are going backwards
     //turningValue = Math.copySign(turningValue, speed);
     //DriveBase.setExpiration(.4);
-    DriveBase.setSafetyEnabled(false);
-    DriveBase.arcadeDrive(speed, strturningValue);
+    //DriveBase.setSafetyEnabled(false);
+    //DriveBase.arcadeDrive(speed, strturningValue);
   }
 
   public void driveBackward(double speed){
-    double strturningValue = (0 - Gyro.getAngle()) * kP;
+    //double strturningValue = (0 - Gyro.getAngle()) * kP;
     //Invert the direction of the turn if we are going backwards
     //turningValue = Math.copySign(turningValue, speed);
-    turningValue = -turningValue;
+    //turningValue = -turningValue;
     //DriveBase.setExpiration(.4);
-    DriveBase.setSafetyEnabled(false);
-    DriveBase.arcadeDrive(speed, strturningValue);
+    // DriveBase.setSafetyEnabled(false);
+    // DriveBase.arcadeDrive(speed, strturningValue);
   }
 
   public void rotate(double degrees){
@@ -192,7 +237,7 @@ public class DriveSub extends Subsystem {
   }
 
   public void driveStop(){
-    DriveBase.arcadeDrive(0,0);
+    betterArcadeDrive(0,0);
   }
 
 
