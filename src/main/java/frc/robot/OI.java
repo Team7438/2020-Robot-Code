@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.Joystick;
 
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import frc.robot.commands.Lidar;
+import frc.robot.commands.IntakeToggle;
 
 
 /**
@@ -67,6 +69,8 @@ public class OI {
     // Experimental
 
     // thumb.whileHeld(VisionHatch);
+    thumb.whileHeld(new IntakeToggle());
+    
     // trigger.cancelWhenPressed(VisionHatch);
 
     // nine.whenPressed(new RotateCmd(90));

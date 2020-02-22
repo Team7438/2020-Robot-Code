@@ -28,32 +28,44 @@ import frc.robot.commands.DriveCmd;
 public class DriveSub extends Subsystem {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
-
+  // -------------------
+  // -------------------
+  // -------------------
+  //DISABLE DRIVE BOOLEAN
+  public static Boolean disableDrive = true;
+  //DISABLE DRIVE BOOLEAN
+  // -------------------
+  // -------------------
+  // -------------------
   public double distanceRight;
   public double distanceLeft;
   public double rateRight;
   public double rateLeft;
   public double avgDistance;
   public double turningValue;
-  //public static PWMVictorSPX leftOne = new PWMVictorSPX(RobotMap.left1);
+  // public static PWMVictorSPX leftOne = new PWMVictorSPX(RobotMap.left1);
   public static VictorSPX leftOne = new VictorSPX(RobotMap.left1);
-  //public static PWMVictorSPX leftTwo = new PWMVictorSPX(RobotMap.left2);
+  // public static PWMVictorSPX leftTwo = new PWMVictorSPX(RobotMap.left2);
   public static VictorSPX leftTwo = new VictorSPX(RobotMap.left2);
-  //OLD public static SpeedControllerGroup Gleft = new SpeedControllerGroup(leftOne, leftTwo);
+  // OLD public static SpeedControllerGroup Gleft = new
+  // SpeedControllerGroup(leftOne, leftTwo);
   public double angle;
   public float roll;
   public float pitch;
   public double gyro;
   public static double kP = 0.15;
-  //public static PWMVictorSPX rightOne = new PWMVictorSPX(RobotMap.right1);
+  // public static PWMVictorSPX rightOne = new PWMVictorSPX(RobotMap.right1);
   public static VictorSPX rightOne = new VictorSPX(RobotMap.right1);
-  //public static PWMVictorSPX rightTwo = new PWMVictorSPX(RobotMap.right2);
+  // public static PWMVictorSPX rightTwo = new PWMVictorSPX(RobotMap.right2);
   public static VictorSPX rightTwo = new VictorSPX(RobotMap.right2);
-  //OLD public static SpeedControllerGroup Gright = new SpeedControllerGroup(rightOne, rightTwo);
-  public static Encoder m_encoderRight = new Encoder(RobotMap.rightEncoderPort1, RobotMap.rightEncoderPort2, false, Encoder.EncodingType.k4X);
-  public static Encoder m_encoderLeft = new Encoder(RobotMap.leftEncoderPort1, RobotMap.leftEncoderPort2, true, Encoder.EncodingType.k4X);
-  //OLD public static final DifferentialDrive DriveBase = new DifferentialDrive(Gleft, Gright);
-  public static VictorSPX centerMotor = new VictorSPX(RobotMap.center);
+  // OLD public static SpeedControllerGroup Gright = new
+  // SpeedControllerGroup(rightOne, rightTwo);
+  public static Encoder m_encoderRight = new Encoder(RobotMap.rightEncoderPort1, RobotMap.rightEncoderPort2, false,
+      Encoder.EncodingType.k4X);
+  public static Encoder m_encoderLeft = new Encoder(RobotMap.leftEncoderPort1, RobotMap.leftEncoderPort2, true,
+      Encoder.EncodingType.k4X);
+  // OLD public static final DifferentialDrive DriveBase = new
+  // DifferentialDrive(Gleft, Gright);
   public double minTurnSpeed = .45;
   public double zValue;
   public double yValue;
@@ -100,9 +112,13 @@ public class DriveSub extends Subsystem {
       rightPower = -1;
     }
 
-    leftOne.set(ControlMode.PercentOutput, leftPower);
-    rightOne.set(ControlMode.PercentOutput, -rightPower);
-    System.out.println(turning + " * " + leftPower + " * " + rightPower);
+    if (!disableDrive) {
+      leftOne.set(ControlMode.PercentOutput, leftPower);
+      rightOne.set(ControlMode.PercentOutput, -rightPower);
+    } else {
+      leftOne.set(ControlMode.PercentOutput, 0);
+      rightOne.set(ControlMode.PercentOutput, 0);
+    }
   }
 
   public void robotDriver(Joystick joystickZero){
@@ -133,7 +149,6 @@ public class DriveSub extends Subsystem {
     betterArcadeDrive(yValue * -1, zValue/2);
     //DriveBase.arcadeDrive(squareInput(-joystickZero.getY())/3, squareInput(joystickZero.getZ())/3);
     //centerMotor.setSpeed(-joystickZero.getX()/2);
-    centerMotor.set(ControlMode.PercentOutput, joystickZero.getX());
   }
 
   public double squareInput(double input){

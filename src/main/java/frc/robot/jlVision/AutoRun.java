@@ -26,3 +26,5 @@ public class AutoRun extends Command {
     protected boolean isFinished() {
         return this.isTimedOut();
     }
+
+}
