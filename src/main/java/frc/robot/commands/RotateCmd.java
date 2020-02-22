@@ -7,6 +7,7 @@
 
 package frc.robot.commands;
 
+import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
@@ -17,6 +18,7 @@ public class RotateCmd extends Command {
   public boolean firstTime = true;
   private double goalAngle = 0.0;
 	private boolean isDone = false;
+	private double speed = .5; 
 	private double tolerance = 10;
 	private double currentAngle;
   private double turningSpeed;  
@@ -78,12 +80,12 @@ public class RotateCmd extends Command {
     // System.out.print("Turning Speed:    ");
     // System.out.println(turningSpeed);
     if(Math.abs(goalAngle - currentAngle) < tolerance) {  //if within tolerance
-    	DriveSub.DriveBase.arcadeDrive(0, 0);
+    	DriveSub.betterArcadeDrive(0, 0);
     	isDone = true;
     } else if(currentAngle < goalAngle) {  //If left of target angle 
-        DriveSub.DriveBase.arcadeDrive(0, turningSpeed);  //turn clockwise
+        DriveSub.betterArcadeDrive(0, turningSpeed);  //turn clockwise
     } else if(currentAngle > goalAngle){  //If right of target angle
-        DriveSub.DriveBase.arcadeDrive(0, -turningSpeed);  //turn counterclockwise
+        DriveSub.betterArcadeDrive(0, -turningSpeed);  //turn counterclockwise
     }
   }
 
