@@ -9,12 +9,12 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
-import frc.robot.subsystems.IntakeSub;
+import frc.robot.subsystems.TurretSub;
 
-public class IntakeToggle extends Command {
+public class RotateTurretRight extends Command {
 
 
-  public IntakeToggle() {
+  public RotateTurretRight() {
   }
 
   // Called just before this Command runs the first time
@@ -25,7 +25,7 @@ public class IntakeToggle extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    IntakeSub.Rollin();
+    TurretSub.RotateRight();
   }
 
   // Make this return true when this Command no longer needs to run execute()
@@ -39,7 +39,7 @@ public class IntakeToggle extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    IntakeSub.RollStop();
+    TurretSub.stopRotate();
     // Console.WriteLine("Text to print");
 
   }
@@ -48,6 +48,6 @@ public class IntakeToggle extends Command {
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    IntakeSub.RollStop();
+    TurretSub.stopRotate();
   }
 }

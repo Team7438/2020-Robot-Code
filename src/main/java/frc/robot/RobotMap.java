@@ -26,6 +26,9 @@ public class RobotMap {
   //Intake Motors
   public static int rearIntake = 5;
 
+  //Turret
+  public static int turretYaw = 8;
+
   //Climb Motors
   public static int climbFront = 6;
 
@@ -42,9 +45,6 @@ public class RobotMap {
   public static int elevatorEncoderPort1 = 4;
   public static int elevatorEncoderPort2 = 5;
 
-  //Limit Switches
-  public static int intakeLimitPort = 7;
-  public static int elevatorLimitPort = 8;
 
   //Solenoid Valves for Pneumatics
   public static int eleSole1 = 1;

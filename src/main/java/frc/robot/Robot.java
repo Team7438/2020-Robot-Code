@@ -36,6 +36,9 @@ import frc.robot.subsystems.DriveSub;
 //import frc.robot.chenyxVision.AutoRun;
 // Was commented out import frc.robot.subsystems.PIDElevator;
 //import frc.robot.chenyxVision.HUD;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import frc.robot.LIDARLite;
+import edu.wpi.first.wpilibj.I2C;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -51,6 +54,11 @@ public class Robot extends TimedRobot {
   public static final String MecanumDriver = null;
   public static OI m_oi;
   public static DriveSub driveSub = new DriveSub();
+  public static Boolean isEncoderConnected = false;
+  public static Integer EncoderFrequency = 0;
+  public static Double EncoderOutput;
+  public static Double EncoderDistance;
+  
   //public static CargoLoader cargoLoader = new CargoLoader();
   //public static HatchRelease hatchRelease = new HatchRelease();
   //public static ElevatorTilt elevatorTilt = new ElevatorTilt();
@@ -61,6 +69,8 @@ public class Robot extends TimedRobot {
  
   //public Command elevatorTuning = new ElevatorTune();
   public Command drivingCmd = new DriveCmd();
+  public final DutyCycleEncoder m_dutyCycleEncoder = new DutyCycleEncoder(4);
+  public final LIDARLite m_distanceSensor = new LIDARLite(I2C.Port.kOnboard);
   // public static PIDElevator pIDElevatorWinch = new PIDElevator();
   // public static DoubleSolenoid hatchPusher = new DoubleSolenoid(RobotMap.hatchSole1, RobotMap.hatchSole2);
 
@@ -79,6 +89,9 @@ public class Robot extends TimedRobot {
     //camera = CameraServer.getInstance().startAutomaticCapture();
 
     m_oi = new OI();
+
+    m_dutyCycleEncoder.setDistancePerRotation(5);
+    m_distanceSensor.startMeasuring();
     
     // m_chooser.addOption("Center", new Autofront());
     // m_chooser.addOption("Left1", new AutoLeft1());
@@ -129,6 +142,18 @@ public class Robot extends TimedRobot {
     Scheduler.getInstance().run();
     driveSub.encoderUpdate();
     driveSub.gyroUpdate();
+    isEncoderConnected = m_dutyCycleEncoder.isConnected();
+    EncoderFrequency = m_dutyCycleEncoder.getFrequency();
+    EncoderOutput = m_dutyCycleEncoder.get();
+    EncoderDistance = m_dutyCycleEncoder.getDistance();
+
+
+    SmartDashboard.putBoolean("Connected", isEncoderConnected);
+    SmartDashboard.putNumber("Frequency", EncoderFrequency);
+    SmartDashboard.putNumber("Output", EncoderOutput);
+    SmartDashboard.putNumber("Distance", EncoderDistance);
+    SmartDashboard.putNumber("Lidar Distance", m_distanceSensor.getDistance());
+
     //Robot.elevatorWinch.eleEncoderUpdate();
     //Robot.elevatorWinch.updateElevatorStatus();
    }
