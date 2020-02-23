@@ -69,7 +69,9 @@ public class Robot extends TimedRobot {
  
   //public Command elevatorTuning = new ElevatorTune();
   public Command drivingCmd = new DriveCmd();
+  // Encoder
   public final DutyCycleEncoder m_dutyCycleEncoder = new DutyCycleEncoder(4);
+  // Lidar
   public final LIDARLite m_distanceSensor = new LIDARLite(I2C.Port.kOnboard);
   // public static PIDElevator pIDElevatorWinch = new PIDElevator();
   // public static DoubleSolenoid hatchPusher = new DoubleSolenoid(RobotMap.hatchSole1, RobotMap.hatchSole2);
