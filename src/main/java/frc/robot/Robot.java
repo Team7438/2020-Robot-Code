@@ -25,6 +25,7 @@ import frc.robot.commands.DriveCmd;
 //import frc.robot.commands.AutoLeft3;
 //import frc.robot.commands.ResetElevatorEncoderCommand;
 import frc.robot.subsystems.DriveSub;
+import frc.robot.subsystems.LoaderSub;
 //import frc.robot.subsystems.ElevatorTilt;
 //import frc.robot.subsystems.ElevatorWinch;
 //import frc.robot.subsystems.CargoLoader;
@@ -58,6 +59,7 @@ public class Robot extends TimedRobot {
   public static Integer EncoderFrequency = 0;
   public static Double EncoderOutput;
   public static Double EncoderDistance;
+  public static LoaderSub loader = new LoaderSub();
   
   //public static CargoLoader cargoLoader = new CargoLoader();
   //public static HatchRelease hatchRelease = new HatchRelease();

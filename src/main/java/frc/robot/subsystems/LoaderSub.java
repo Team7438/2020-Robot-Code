@@ -8,38 +8,36 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
+import frc.robot.Robot;
 import frc.robot.RobotMap;
-
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-
+import edu.wpi.first.wpilibj.Solenoid;
 /**
  * Add your docs here.
  */
+public class LoaderSub extends Subsystem {
+  // Put methods for controlling this subsystem
+  // here. Call these from Commands.
 
-public class TurretSub extends Subsystem {
-    public static VictorSPX turretYaw = new VictorSPX(RobotMap.turretYaw);
+  public Solenoid oneLifter = new Solenoid(11,RobotMap.lifterSole3);
+   public void liftUp(){
+     oneLifter.set(true);
+   }
 
-  public static void RotateLeft() {
-    turretYaw.set(ControlMode.PercentOutput, 0.5);
-  }
+  //public boolean lifted(){
+  //  if(Robot.loader.oneLifter.get() == true) {
+  //    return true;
+  //  }else{
+  //    return false;
+  //  }
+//}
 
-  public static void RotateRight() {
-    turretYaw.set(ControlMode.PercentOutput, -0.5);
-  }
-
-  public static void RotateTo(Integer degrees) {
-
-  }
-
-  public static void stopRotate() {
-    turretYaw.set(ControlMode.PercentOutput, 0);
-  }
-
-  
   @Override
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.
     // setDefaultCommand(new MySpecialCommand());
+  }
+
+public void liftDown() {
+    oneLifter.set(false);
   }
 }
