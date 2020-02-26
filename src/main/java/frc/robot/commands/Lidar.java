@@ -34,7 +34,6 @@ public class Lidar extends Command {
   @Override
   protected void execute() {
     // int distance = LIDARLite.getDistance();
-    System.out.println("Distance" + m_distanceSensor.getDistance());
   }
 
   // Make this return true when this Command no longer needs to run execute()

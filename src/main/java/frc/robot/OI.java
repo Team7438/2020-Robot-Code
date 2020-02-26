@@ -16,7 +16,8 @@ import frc.robot.commands.LoadCmd;
 import frc.robot.commands.IntakeToggle;
 import frc.robot.commands.RotateTurretLeft;
 import frc.robot.commands.RotateTurretRight;
-
+import frc.robot.jlVision.AlignVisionTarget;
+import frc.robot.jlVision.AutoRunTarget;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -61,14 +62,14 @@ public class OI {
   public Button altten = new JoystickButton(joystickOne, 10);
   public Button alteleven = new JoystickButton(joystickOne, 11);
   public Button alttwelve = new JoystickButton(joystickOne, 12);
-  
-  //public double joyOneVal = Robot.m_oi.joystickOne.getX();
+
+  // public double joyOneVal = Robot.m_oi.joystickOne.getX();
 
   //// TRIGGERING COMMANDS WITH BUTTONS
   // Once you have a button, it's trivial to bind it to a button in one of
   // three ways:
 
-    public OI() {
+  public OI() {
     // Experimental
     twelve.whenPressed(new LoadCmd());
 
@@ -76,6 +77,7 @@ public class OI {
     thumb.whileHeld(new IntakeToggle());
     three.whileHeld(new RotateTurretLeft());
     four.whileHeld(new RotateTurretRight());
+    eleven.whileHeld(new AutoRunTarget());
     
     // trigger.cancelWhenPressed(VisionHatch);
 

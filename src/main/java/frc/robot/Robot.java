@@ -41,6 +41,10 @@ import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import frc.robot.LIDARLite;
 import edu.wpi.first.wpilibj.I2C;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the TimedRobot
@@ -60,7 +64,8 @@ public class Robot extends TimedRobot {
   public static Double EncoderOutput;
   public static Double EncoderDistance;
   public static LoaderSub loader = new LoaderSub();
-  
+  public NetworkTableEntry targetYaw;
+  public NetworkTableEntry isDriverMode;
   //public static CargoLoader cargoLoader = new CargoLoader();
   //public static HatchRelease hatchRelease = new HatchRelease();
   //public static ElevatorTilt elevatorTilt = new ElevatorTilt();
@@ -96,6 +101,8 @@ public class Robot extends TimedRobot {
 
     m_dutyCycleEncoder.setDistancePerRotation(5);
     m_distanceSensor.startMeasuring();
+
+    NetworkTable MicrosoftCam = NetworkTableInstance.getDefault().getTable("chameleon-vision");
     
     // m_chooser.addOption("Center", new Autofront());
     // m_chooser.addOption("Left1", new AutoLeft1());
@@ -112,7 +119,22 @@ public class Robot extends TimedRobot {
     driveSub.encoderInit();
     driveSub.gyroReset();
     driveSub.gryoInit();
+
+     // Gets the default instance of NetworkTables
+     NetworkTableInstance table = NetworkTableInstance.getDefault();
+
+     // Gets the MyCamName table under the chamelon-vision table
+     // MyCamName will vary depending on the name of your camera
+     NetworkTable cameraTable = table.getTable("chameleon-vision").getSubTable("LifeCam");
+
+     // Gets the yaw to the target from the cameraTable
+     targetYaw = cameraTable.getEntry("targetYaw");
+
+     // Gets the driveMode boolean from the cameraTable
+     isDriverMode = cameraTable.getEntry("driver_mode");
   
+
+
     System.out.printf("robotInit");
 
     //try {
@@ -157,6 +179,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Output", EncoderOutput);
     SmartDashboard.putNumber("Distance", EncoderDistance);
     SmartDashboard.putNumber("Lidar Distance", m_distanceSensor.getDistance());
+    SmartDashboard.putNumber("targetYaw", targetYaw.getDouble(0.0));
+
 
     //Robot.elevatorWinch.eleEncoderUpdate();
     //Robot.elevatorWinch.updateElevatorStatus();

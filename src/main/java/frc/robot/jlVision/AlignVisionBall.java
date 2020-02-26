@@ -3,14 +3,14 @@ package frc.robot.jlVision;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class AlignVision {
+public class AlignVisionBall {
 
-    private static AlignVision instance;
-    public static AlignVision getInstance() {
+    private static AlignVisionBall instance;
+    public static AlignVisionBall getInstance() {
         if(instance==null)
-            synchronized(AlignVision.class){
+            synchronized(AlignVisionBall.class){
                 if(instance==null)
-                    instance=new AlignVision();
+                    instance=new AlignVisionBall();
             }
         return instance;
     }
