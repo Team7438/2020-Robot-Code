@@ -77,7 +77,7 @@ public class OI {
     thumb.whileHeld(new IntakeToggle());
     three.whileHeld(new RotateTurretLeft());
     four.whileHeld(new RotateTurretRight());
-    eleven.whileHeld(new AutoRunTarget());
+    //eleven.whileHeld(new AutoRunTarget());
     
     // trigger.cancelWhenPressed(VisionHatch);
 

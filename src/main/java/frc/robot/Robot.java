@@ -80,6 +80,8 @@ public class Robot extends TimedRobot {
   public final DutyCycleEncoder m_dutyCycleEncoder = new DutyCycleEncoder(4);
   // Lidar
   public final LIDARLite m_distanceSensor = new LIDARLite(I2C.Port.kOnboard);
+
+  public static Shooter shooter0 = new Shooter(0, "HD USB Camera", "http://raspberrypi.local:1181/?action=stream");
   // public static PIDElevator pIDElevatorWinch = new PIDElevator();
   // public static DoubleSolenoid hatchPusher = new DoubleSolenoid(RobotMap.hatchSole1, RobotMap.hatchSole2);
 
@@ -125,7 +127,7 @@ public class Robot extends TimedRobot {
 
      // Gets the MyCamName table under the chamelon-vision table
      // MyCamName will vary depending on the name of your camera
-     NetworkTable cameraTable = table.getTable("chameleon-vision").getSubTable("LifeCam");
+     NetworkTable cameraTable = table.getTable("chameleon-vision").getSubTable("HD USB Camera");
 
      // Gets the yaw to the target from the cameraTable
      targetYaw = cameraTable.getEntry("targetYaw");
