@@ -41,8 +41,8 @@ public class AlignVisionTarget {
 
         if (tempPower < 0.1) {
             tempPower = 0.1;
-        } else if (tempPower > 0.5) {
-            tempPower = 0.5;
+        } else if (tempPower > 0.3) {
+            tempPower = 0.3;
         }
 
         if (p > 0) {
