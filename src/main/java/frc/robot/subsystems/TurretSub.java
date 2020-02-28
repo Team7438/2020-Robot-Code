@@ -21,7 +21,7 @@ public class TurretSub extends Subsystem {
     public static VictorSPX turretYaw = new VictorSPX(RobotMap.turretYaw);
 
   public static void RotateLeft() {
-    turretYaw.set(ControlMode.PercentOutput, 0.2;
+    turretYaw.set(ControlMode.PercentOutput, 0.2);
   }
 
   public static void RotateRight() {
