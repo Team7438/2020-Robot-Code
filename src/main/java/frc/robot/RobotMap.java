@@ -49,5 +49,5 @@ public class RobotMap {
   //Solenoid Valves for Pneumatics
   public static int eleSole1 = 1;
   public static int eleSole2 = 0;
-  public static int hatchSole3 = 3;
+  public static int lifterSole3 = 3; //Ball Lifter Piston
 }

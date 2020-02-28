@@ -1,14 +1,14 @@
 package frc.robot.jlVision;
-import frc.robot.jlVision.AlignVision;
+import frc.robot.jlVision.AlignVisionBall;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.*;
 import frc.robot.subsystems.DriveSub;
 
-public class AutoRun extends Command {
-    private AlignVision vision = AlignVision.getInstance();
+public class AutoRunBall extends Command {
+    private AlignVisionBall vision = AlignVisionBall.getInstance();
 
-    public AutoRun() {
+    public AutoRunBall() {
         requires(Robot.driveSub);
     }
 
@@ -18,8 +18,8 @@ public class AutoRun extends Command {
     }
     @Override
     protected void execute() {
-        System.out.println(AlignVision.AugmentedDriverInterface());
-        DriveSub.betterArcadeDrive(AlignVision.AugmentedDriverInterfaceForward(), AlignVision.AugmentedDriverInterface());
+        System.out.println("Ball: " + AlignVisionBall.AugmentedDriverInterface());
+        DriveSub.betterArcadeDrive(AlignVisionBall.AugmentedDriverInterfaceForward(), AlignVisionBall.AugmentedDriverInterface());
     }
 
     @Override

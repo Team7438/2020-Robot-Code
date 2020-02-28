@@ -6,34 +6,28 @@
 /*----------------------------------------------------------------------------*/
 
 package frc.robot.commands;
+
 import edu.wpi.first.wpilibj.command.Command;
-import frc.robot.LIDARLite;
-import edu.wpi.first.wpilibj.I2C;
+import frc.robot.Robot;
+import frc.robot.subsystems.LoaderSub;
 
-public class Lidar extends Command {
-
-  private final LIDARLite m_distanceSensor = new LIDARLite(I2C.Port.kOnboard);
-
-
-  public Lidar() {
+public class LoadCmd extends Command {
+  public LoadCmd() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
-    
+    requires(Robot.loader);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    Robot.loader.liftUp();
     
-    m_distanceSensor.startMeasuring();
-      System.out.println("STARTING");
-      
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    // int distance = LIDARLite.getDistance();
   }
 
   // Make this return true when this Command no longer needs to run execute()
@@ -45,13 +39,12 @@ public class Lidar extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    m_distanceSensor.stopMeasuring();
+  
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    m_distanceSensor.stopMeasuring();
   }
 }
