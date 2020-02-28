@@ -19,6 +19,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
     Initalize:
     import org.opencv.core.Point;
+    // for game use:
+    Shooter shooter0 = new Shooter(0, "C922 Pro Stream Webcam");
+    // for visual mode (for debugging) use:
     Shooter shooter0 = new Shooter(0, "C922 Pro Stream Webcam", "http://raspberrypi.local:1181/?action=stream");
 
     Call:
@@ -41,32 +44,63 @@ class Shooter {
     NetworkTable chameleon_table = null;
     NetworkTable camera_table = null;
 
-    int displayed_frame_h_width  = -1;  // half-sizes
+    int displayed_frame_h_width = -1; // half-sizes
     int displayed_frame_h_height = -1;
     boolean HD_format = true;
 
-    double FOV_h_hor = -1.0;  // 29/36
-    double FOV_h_ver = -1.0;  // 23/20
+    double FOV_h_hor = -1.0; // 29/36
+    double FOV_h_ver = -1.0; // 23/20
 
     // manual calibration: at distance calibDist
-    double calibDist = -1.0;  // meters
+    double calibDist = -1.0; // meters
     double calibLenX = -100;
     double calibLenY = -50;
 
     int targetLocked = 0;
 
-    boolean driverMode = false;  // don't show overlays on top of video--unused (does not populate NT)
-    boolean headlessMode = false;  // do not get or show any video to preserve bandwidth; only data from NT
+    boolean driverMode = false; // don't show overlays on top of video--unused (does not populate NT)
+    boolean headlessMode = false; // do not get or show any video to preserve bandwidth; only data from NT
 
     double calibBoundingWidth = -1.0f;
 
     boolean isValid = false;
-    Point shooterDelta = new Point();  // (yaw, pitch)
+    Point shooterDelta = new Point(); // (yaw, pitch)
 
     double hexgon_width_inches = 39.25f;
 
-    // Constructor
+    // Constructors
 
+    // headerless constructor (do not get video frames); use for game:
+    // Shooter shooter0 = new Shooter(0, "C922 Pro Stream Webcam");
+    public Shooter(int camera_id, String camera_name) {
+
+        this.camera_id = camera_id;
+        this.camera_name = camera_name;
+
+        headlessMode = true;
+
+        chameleon_table = NetworkTableInstance.getDefault().getTable("chameleon-vision/" + camera_name);
+
+        new Thread(() -> {
+
+            while (!Thread.interrupted()) {
+                // get frame sizes
+                displayed_frame_h_width = 640 / 2;
+                displayed_frame_h_height = 380 / 2;
+                annotateFrame(null);
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
+    }
+
+    // visual constructor: shows Chameleon video frames and overlays ballistic target:
+    // Shooter shooter0 = new Shooter(0, "C922 Pro Stream Webcam", "http://raspberrypi.local:1181/?action=stream");
     public Shooter(int camera_id, String camera_name, String camera_url) {
 
     this.camera_id = camera_id;
@@ -99,24 +133,6 @@ class Shooter {
         HD_format = false;
     }
     */
-
-    // manual calibration
-    if (HD_format) {  // HD ratio
-        calibLenX = 100;
-        calibLenY = 50;
-
-        FOV_h_hor = 36.0;
-        FOV_h_ver = 20.0;
-    } else {  // 0.75 ratio
-        calibLenX = 100;
-        calibLenY = 100;
-
-        FOV_h_hor = 36.0;
-        FOV_h_ver = 24.0;
-    }
-
-    calibDist = camera_id == 0 ? 2.0f : 2.7f;  // meters
-    calibBoundingWidth = camera_id == 0 ? 310.0f : 370f; // in pixels
 
     new Thread(() -> {
 
@@ -171,6 +187,24 @@ class Shooter {
     }
 
     private void annotateFrame(Mat source) {
+
+        // manual calibration
+        if (HD_format) { // HD ratio
+            calibLenX = 100;
+            calibLenY = 50;
+
+            FOV_h_hor = 36.0;
+            FOV_h_ver = 20.0;
+        } else { // 0.75 ratio
+            calibLenX = 100;
+            calibLenY = 100;
+
+            FOV_h_hor = 36.0;
+            FOV_h_ver = 24.0;
+        }
+
+        calibDist = camera_id == 0 ? 2.0f : 2.7f; // meters
+        calibBoundingWidth = camera_id == 0 ? 310.0f : 370f; // in pixels
 
         // source.setTo(new Scalar(0,0,0));  // clear image
 
