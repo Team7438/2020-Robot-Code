@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-//Cameras to change, line 86, 132
+//Cameras to change, ~line 86, 132
 
 package frc.robot;
 
@@ -42,7 +42,8 @@ import frc.robot.subsystems.LoaderSub;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import frc.robot.LIDARLite;
 import edu.wpi.first.wpilibj.I2C;
-
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -59,7 +60,6 @@ import edu.wpi.first.wpilibj.util.Color;
  * project.
  */
 
-
 public class Robot extends TimedRobot {
 
   public static final String MecanumDriver = null;
@@ -73,27 +73,28 @@ public class Robot extends TimedRobot {
   public NetworkTableEntry targetYaw;
   public NetworkTableEntry isDriverMode;
   public NetworkTableEntry isValid;
-  //public static CargoLoader cargoLoader = new CargoLoader();
-  //public static HatchRelease hatchRelease = new HatchRelease();
-  //public static ElevatorTilt elevatorTilt = new ElevatorTilt();
-  //public static ElevatorWinch elevatorWinch = new ElevatorWinch();
-  //public static FrontClimber frontClimber = new FrontClimber();
+  // public static CargoLoader cargoLoader = new CargoLoader();
+  // public static HatchRelease hatchRelease = new HatchRelease();
+  // public static ElevatorTilt elevatorTilt = new ElevatorTilt();
+  // public static ElevatorWinch elevatorWinch = new ElevatorWinch();
+  // public static FrontClimber frontClimber = new FrontClimber();
   // was commented out public static UsbCamera camera;
-  //private static HUD hud = HUD.getInstance();
- 
-  //public Command elevatorTuning = new ElevatorTune();
+  // private static HUD hud = HUD.getInstance();
+
+  // public Command elevatorTuning = new ElevatorTune();
   public Command drivingCmd = new DriveCmd();
   // Encoder
   public final DutyCycleEncoder m_dutyCycleEncoder = new DutyCycleEncoder(4);
   // Lidar
   public final LIDARLite m_distanceSensor = new LIDARLite(I2C.Port.kOnboard);
-  //Color Sensor
+  // Color Sensor
   private final I2C.Port i2Cport = I2C.Port.kMXP;
   private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2Cport);
 
   public static Shooter shooter0 = new Shooter(0, "New Camera", "http://raspberrypi.local:1181/?action=stream");
   // public static PIDElevator pIDElevatorWinch = new PIDElevator();
-  // public static DoubleSolenoid hatchPusher = new DoubleSolenoid(RobotMap.hatchSole1, RobotMap.hatchSole2);
+  // public static DoubleSolenoid hatchPusher = new
+  // DoubleSolenoid(RobotMap.hatchSole1, RobotMap.hatchSole2);
 
   // public static MecanumDriver mecanumDriver = new MecanumDriver();
 
@@ -102,12 +103,12 @@ public class Robot extends TimedRobot {
   SendableChooser<Command> m_chooser = new SendableChooser<>();
 
   /**
-   * This function is run when the robot is first started up and should be
-   * used for any initialization code.
+   * This function is run when the robot is first started up and should be used
+   * for any initialization code.
    */
   @Override
   public void robotInit() {
-    //camera = CameraServer.getInstance().startAutomaticCapture();
+    UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
     
 
     m_oi = new OI();

@@ -34,7 +34,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 */
 
-class Shooter {
+public class Shooter {
 
     int camera_id = -1;
     String camera_url = null;

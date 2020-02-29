@@ -59,6 +59,7 @@ public class AlignVisionTarget {
         tempVar = SmartDashboard.getNumber("targetYaw", 0);
 
         Point delta = new Point();
+        System.out.println(delta.x);
         if(Robot.shooter0.trainOnTraget(delta)) {
         // rotate turret by delta.x degrees relative to current position
         // pitch the shooter by delta.y degrees relative to current position
