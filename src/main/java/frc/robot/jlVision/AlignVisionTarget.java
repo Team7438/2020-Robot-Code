@@ -33,7 +33,7 @@ public class AlignVisionTarget {
 
     private static double turnRate(double p) {
 
-        tempPower = Math.abs(p / 10);
+        tempPower = Math.abs(p / 12);
 
         if (tempPower < 0.05) {
             return 0;
@@ -41,8 +41,8 @@ public class AlignVisionTarget {
 
         if (tempPower < 0.1) {
             tempPower = 0.1;
-        } else if (tempPower > 0.3) {
-            tempPower = 0.3;
+        } else if (tempPower > 0.6) {
+            tempPower = 0.6;
         }
 
         if (p > 0) {
@@ -67,7 +67,6 @@ public class AlignVisionTarget {
 
         //System.out.println("TARGET: " + tempVar);
         turnPower = turnRate(tempVar);
-        System.out.println(turnPower);
         return turnPower;
     }
 

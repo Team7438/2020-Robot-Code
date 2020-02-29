@@ -19,7 +19,7 @@ public class AutoRunBall extends Command {
     @Override
     protected void execute() {
         System.out.println("Ball: " + AlignVisionBall.AugmentedDriverInterface());
-        DriveSub.betterArcadeDrive(AlignVisionBall.AugmentedDriverInterfaceForward(), AlignVisionBall.AugmentedDriverInterface());
+        DriveSub.arcadeDrive(AlignVisionBall.AugmentedDriverInterfaceForward(), AlignVisionBall.AugmentedDriverInterface());
     }
 
     @Override

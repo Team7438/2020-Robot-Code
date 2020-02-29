@@ -8,52 +8,64 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
-import frc.robot.Robot;
-import frc.robot.subsystems.LoaderSub;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.subsystems.TurretSub;
+import frc.robot.commands.CenterTurretCmd;
 
-import java.util.concurrent.TimeUnit;
+public class TurretSearchCmd extends Command {
 
-public class LoadCmd extends Command {
+  private static Boolean rotatingLeft = false;
 
-  int timer = 0; // 1 = 20ms
-
-  public LoadCmd() {
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
+  public TurretSearchCmd() {
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    LoaderSub.liftUp();
-    timer = 0;
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    timer += 1;
+    System.out.println("Potato");
+    if (rotatingLeft) {
+      TurretSub.setPower(0.2);
+    } else if (!rotatingLeft) {
+      TurretSub.setPower(-0.2);
+    } else {
+      TurretSub.setPower(0);
+    }
+    if (SmartDashboard.getNumber("TurretDistance", 0) <= -604) {
+      rotatingLeft = false;
+    } else if (SmartDashboard.getNumber("TurretDistance", 0) >= 1007) {
+      rotatingLeft = true;
+    }
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    if (timer < 25){
-      return false;
+    if (SmartDashboard.getBoolean("isValid", false)) {
+      return true;
     } else {
-      return  true;
+      return false;
     }
+    //return Robot.limitSwitch.get();
+    //return Robot.cargoLoader.isSwitchSet();
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    LoaderSub.liftDown();
+    TurretSub.stopRotate();
+    // Console.WriteLine("Text to print");
+
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    TurretSub.stopRotate();
   }
 }

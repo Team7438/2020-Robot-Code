@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PWMVictorSPX;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -32,7 +34,7 @@ public class DriveSub extends Subsystem {
   // -------------------
   // -------------------
   //DISABLE DRIVE BOOLEAN
-  public static Boolean disableDrive = true;
+  public static Boolean disableDrive = false;
   //DISABLE DRIVE BOOLEAN
   // -------------------
   // -------------------
@@ -44,9 +46,9 @@ public class DriveSub extends Subsystem {
   public double avgDistance;
   public double turningValue;
   // public static PWMVictorSPX leftOne = new PWMVictorSPX(RobotMap.left1);
-  public static VictorSPX leftOne = new VictorSPX(RobotMap.left1);
+  public static WPI_VictorSPX leftOne = new WPI_VictorSPX(RobotMap.left1);
   // public static PWMVictorSPX leftTwo = new PWMVictorSPX(RobotMap.left2);
-  public static VictorSPX leftTwo = new VictorSPX(RobotMap.left2);
+  public static WPI_VictorSPX leftTwo = new WPI_VictorSPX(RobotMap.left2);
   // OLD public static SpeedControllerGroup Gleft = new
   // SpeedControllerGroup(leftOne, leftTwo);
   public double angle;
@@ -55,10 +57,16 @@ public class DriveSub extends Subsystem {
   public double gyro;
   public static double kP = 0.15;
   // public static PWMVictorSPX rightOne = new PWMVictorSPX(RobotMap.right1);
-  public static VictorSPX rightOne = new VictorSPX(RobotMap.right1);
+  public static WPI_VictorSPX rightOne = new WPI_VictorSPX(RobotMap.right1);
   // public static PWMVictorSPX rightTwo = new PWMVictorSPX(RobotMap.right2);
-  public static VictorSPX rightTwo = new VictorSPX(RobotMap.right2);
+  public static WPI_VictorSPX rightTwo = new WPI_VictorSPX(RobotMap.right2);
   // OLD public static SpeedControllerGroup Gright = new
+
+  static SpeedControllerGroup m_left = new SpeedControllerGroup(leftOne, leftTwo);
+  static SpeedControllerGroup m_right = new SpeedControllerGroup(rightOne, rightTwo);
+
+  public static final DifferentialDrive DriveBase = new DifferentialDrive(m_left, m_right);
+
   // SpeedControllerGroup(rightOne, rightTwo);
   public static Encoder m_encoderRight = new Encoder(RobotMap.rightEncoderPort1, RobotMap.rightEncoderPort2, false,
       Encoder.EncodingType.k4X);
@@ -80,186 +88,150 @@ public class DriveSub extends Subsystem {
   public static double rightPower;
   // public static ADXRS450_Gyro Gyro = new ADXRS450_Gyro();
   public static AHRS Gyro = new AHRS(SPI.Port.kMXP);
-
-  // Redoing arcade drive, cause WPI is cruel
-  public static void betterArcadeDrive(double forward, double turning) {
-    forward = forward * forward * forward;
     // Run motors in parallel
-    leftTwo.follow(leftOne);
-    rightTwo.follow(rightOne);
 
-    if (forward >= 0) {
-      leftPower = forward + turning;
-      rightPower = forward - turning;
-    } else if (forward < 0) {
-      leftPower = forward - turning;
-      rightPower = forward + turning;
+    public static void arcadeDrive(double xSpeed, double zRotation) {
+      DriveBase.arcadeDrive(xSpeed, zRotation);
     }
 
-    if (leftPower > 1) {
-      leftPower = 1;
+    public void robotDriver(Joystick joystickZero){
+      // Experimental throttle curbve stuff -- Originall arcadeDeive line is below (commented out)
+      yValue=joystickZero.getY();
+      zValue=joystickZero.getZ();
+      
+      yAdjustedValue=squareInput(-yValue)/(yFactor);
+      zAdjustedValue=squareInput(zValue);
+      if (paddleTuner()<0){
+        zFactor = 2;
+        yFactor = 1.6;
+      } else if (paddleTuner()>0){
+        zFactor = 1.5;
+        yFactor = 1.2;
+      }
+      if (Math.abs(zValue)>.1 && zValue<0){ 
+        zAdjustedValue=(squareInput(zValue)/zFactor)-.2;
+       }
+      if (Math.abs(zValue)>.1 && zValue>0){ 
+        zAdjustedValue=(squareInput(zValue)/zFactor)+.2;
+      }
+      
+      //This next line overrides all the other stuff and feeds straight joystic values.
+      //zAdjustedValue=zValue;
+      //Used to be adjusted value, changed to yValue to make it faster.
+      DriveBase.arcadeDrive(yValue * -1, zValue/1.25);
+      //DriveBase.arcadeDrive(squareInput(-joystickZero.getY())/3, squareInput(joystickZero.getZ())/3);
+      //centerMotor.setSpeed(-joystickZero.getX()/2);
     }
-
-    if (rightPower > 1) {
-      rightPower = 1;
+  
+    public double squareInput(double input){
+      if(input<0){
+        return -(input*input);
+      } else {
+        return (input*input);
+      }
     }
-
-    if (leftPower < -1) {
-      leftPower = -1;
+    public double paddleTuner(){
+      return Robot.m_oi.joystickZero.getRawAxis(3);
     }
-
-    if (rightPower < -1) {
-      rightPower = -1;
+  
+    public void encoderInit(){
+      m_encoderRight.setDistancePerPulse((Math.PI * 6) / 1024);
+      // m_encoderRight.setMaxPeriod(.1);
+      m_encoderRight.setMinRate(1);
+      m_encoderRight.setReverseDirection(false);
+      m_encoderRight.setSamplesToAverage(7);
+  
+      m_encoderLeft.setDistancePerPulse((Math.PI * 6) / 1024);
+      // m_encoderLeft.setMaxPeriod(.1);
+      m_encoderLeft.setMinRate(1);
+      m_encoderLeft.setReverseDirection(true);
+      m_encoderLeft.setSamplesToAverage(7);
     }
-
-    if (!disableDrive) {
-      leftOne.set(ControlMode.PercentOutput, leftPower);
-      rightOne.set(ControlMode.PercentOutput, -rightPower);
-    } else {
-      leftOne.set(ControlMode.PercentOutput, 0);
-      rightOne.set(ControlMode.PercentOutput, 0);
+  
+  
+  
+    public void encoderReset(){
+      m_encoderRight.reset();
+      m_encoderLeft.reset();
     }
-  }
-
-  public void robotDriver(Joystick joystickZero){
-    // Experimental throttle curbve stuff -- Originall arcadeDeive line is below (commented out)
-
-    yValue=joystickZero.getY();
-    zValue=joystickZero.getZ();
-    
-    yAdjustedValue=squareInput(-yValue)/(yFactor);
-    zAdjustedValue=squareInput(zValue);
-    if (paddleTuner()<0){
-      zFactor = 2;
-      yFactor = 1.6;
-    } else if (paddleTuner()>0){
-      zFactor = 1.5;
-      yFactor = 1.2;
+  
+    public void gryoInit(){
+      
     }
-    if (Math.abs(zValue)>.1 && zValue<0){ 
-      zAdjustedValue=(squareInput(zValue)/zFactor)-.2;
-     }
-    if (Math.abs(zValue)>.1 && zValue>0){ 
-      zAdjustedValue=(squareInput(zValue)/zFactor)+.2;
+  
+    public void gyroReset(){
+      Gyro.reset();
     }
-    
-    //This next line overrides all the other stuff and feeds straight joystic values.
-    //zAdjustedValue=zValue;
-    //Used to be adjusted value, changed to yValue to make it faster.
-    betterArcadeDrive(yValue * -1, zValue/2);
-    //DriveBase.arcadeDrive(squareInput(-joystickZero.getY())/3, squareInput(joystickZero.getZ())/3);
-    //centerMotor.setSpeed(-joystickZero.getX()/2);
-  }
-
-  public double squareInput(double input){
-    if(input<0){
-      return -(input*input);
-    } else {
-      return (input*input);
+  
+    public void gyroUpdate(){
+      angle = Gyro.getAngle();
+      roll = Gyro.getRoll();
+      pitch = Gyro.getPitch();
+      SmartDashboard.putNumber("Angle", angle);
+      //SmartDashboard.putNumber("Roll", roll);
+      //SmartDashboard.putNumber("pitch", pitch);
+      //SmartDashboard.putNumber("Gyro", angle);
     }
-  }
-  public double paddleTuner(){
-    return Robot.m_oi.joystickZero.getRawAxis(3);
-  }
-
-  public void encoderInit(){
-    m_encoderRight.setDistancePerPulse((Math.PI * 6) / 1024);
-		// m_encoderRight.setMaxPeriod(.1);
-		m_encoderRight.setMinRate(1);
-		m_encoderRight.setReverseDirection(false);
-		m_encoderRight.setSamplesToAverage(7);
-
-    m_encoderLeft.setDistancePerPulse((Math.PI * 6) / 1024);
-		// m_encoderLeft.setMaxPeriod(.1);
-		m_encoderLeft.setMinRate(1);
-		m_encoderLeft.setReverseDirection(true);
-    m_encoderLeft.setSamplesToAverage(7);
-  }
-
-
-
-  public void encoderReset(){
-    m_encoderRight.reset();
-    m_encoderLeft.reset();
-  }
-
-  public void gryoInit(){
-    
-  }
-
-  public void gyroReset(){
-    Gyro.reset();
-  }
-
-  public void gyroUpdate(){
-    angle = Gyro.getAngle();
-    roll = Gyro.getRoll();
-    pitch = Gyro.getPitch();
-    SmartDashboard.putNumber("Angle", angle);
-    //SmartDashboard.putNumber("Roll", roll);
-    //SmartDashboard.putNumber("pitch", pitch);
-    //SmartDashboard.putNumber("Gyro", angle);
-  }
-
-  public void encoderUpdate(){
-    distanceRight = m_encoderRight.getDistance();
-    distanceLeft = m_encoderLeft.getDistance();
-    rateRight = m_encoderRight.getRate();
-    rateLeft = m_encoderLeft.getRate();
-    rateAvg = (rateRight + rateLeft)/2;
-    avgDistance = (distanceLeft + distanceRight)/2;
-    SmartDashboard.putNumber("Right Distance", distanceRight);
-    SmartDashboard.putNumber("Left Distance", distanceLeft);
-    SmartDashboard.putNumber("turning", turningValue);
-
-  }
-
-
-
-  public void driveForward(double speed){
-    //double strturningValue = (0 - Gyro.getAngle()) * kP;
-    //Invert the direction of the turn if we are going backwards
-    //turningValue = Math.copySign(turningValue, speed);
-    //DriveBase.setExpiration(.4);
-    //DriveBase.setSafetyEnabled(false);
-    //DriveBase.arcadeDrive(speed, strturningValue);
-  }
-
-  public void driveBackward(double speed){
-    //double strturningValue = (0 - Gyro.getAngle()) * kP;
-    //Invert the direction of the turn if we are going backwards
-    //turningValue = Math.copySign(turningValue, speed);
-    //turningValue = -turningValue;
-    //DriveBase.setExpiration(.4);
-    // DriveBase.setSafetyEnabled(false);
-    // DriveBase.arcadeDrive(speed, strturningValue);
-  }
-
-  public void rotate(double degrees){
-    double turningSpeed;
-    turningSpeed = (degrees - Gyro.getAngle()) * .007;
-    if(turningSpeed < minTurnSpeed && turningSpeed > 0) {
-       turningSpeed = minTurnSpeed;
+  
+    public void encoderUpdate(){
+      distanceRight = m_encoderRight.getDistance();
+      distanceLeft = m_encoderLeft.getDistance();
+      rateRight = m_encoderRight.getRate();
+      rateLeft = m_encoderLeft.getRate();
+      rateAvg = (rateRight + rateLeft)/2;
+      avgDistance = (distanceLeft + distanceRight)/2;
+      SmartDashboard.putNumber("Right Distance", distanceRight);
+      SmartDashboard.putNumber("Left Distance", distanceLeft);
+      SmartDashboard.putNumber("turning", turningValue);
+  
     }
-    if (turningSpeed > -minTurnSpeed && turningSpeed < 0) {
-      turningSpeed = -minTurnSpeed;
+  
+  
+  
+    public void driveForward(double speed){
+      double strturningValue = (0 - Gyro.getAngle()) * kP;
+      //Invert the direction of the turn if we are going backwards
+      //turningValue = Math.copySign(turningValue, speed);
+      //DriveBase.setExpiration(.4);
+      DriveBase.setSafetyEnabled(false);
+      DriveBase.arcadeDrive(speed, strturningValue);
     }
-    SmartDashboard.putNumber("turning", turningSpeed);
-
-    // // Invert the direction of the turn if we are going backwards
-    // // turningValue = Math.copySign(turningValue, speed);
-    
-  }
-
-  public void driveStop(){
-    betterArcadeDrive(0,0);
-  }
-
-
-  @Override
-  public void initDefaultCommand() {
-    // Set the default command for a subsystem here.
-    setDefaultCommand(new DriveCmd());
-
-  }
+  
+    public void driveBackward(double speed){
+      double strturningValue = (0 - Gyro.getAngle()) * kP;
+      //Invert the direction of the turn if we are going backwards
+      //turningValue = Math.copySign(turningValue, speed);
+      turningValue = -turningValue;
+      //DriveBase.setExpiration(.4);
+      DriveBase.setSafetyEnabled(false);
+      DriveBase.arcadeDrive(speed, strturningValue);
+    }
+  
+    public void rotate(double degrees){
+      double turningSpeed;
+      turningSpeed = (degrees - Gyro.getAngle()) * .007;
+      if(turningSpeed < minTurnSpeed && turningSpeed > 0) {
+         turningSpeed = minTurnSpeed;
+      }
+      if (turningSpeed > -minTurnSpeed && turningSpeed < 0) {
+        turningSpeed = -minTurnSpeed;
+      }
+      SmartDashboard.putNumber("turning", turningSpeed);
+  
+      // // Invert the direction of the turn if we are going backwards
+      // // turningValue = Math.copySign(turningValue, speed);
+      
+    }
+  
+    public void driveStop(){
+      DriveBase.arcadeDrive(0,0);
+    }
+  
+  
+    @Override
+    public void initDefaultCommand() {
+      // Set the default command for a subsystem here.
+      setDefaultCommand(new DriveCmd());
+  
+    }
 }

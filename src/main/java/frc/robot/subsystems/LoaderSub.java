@@ -18,9 +18,10 @@ public class LoaderSub extends Subsystem {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
 
-  public Solenoid oneLifter = new Solenoid(11,RobotMap.lifterSole3);
-   public void liftUp(){
-     oneLifter.set(true);
+  public static Solenoid oneLifter = new Solenoid(11, RobotMap.lifterSole3);
+
+  public static void liftUp() {
+    oneLifter.set(true);
    }
 
   //public boolean lifted(){
@@ -37,7 +38,7 @@ public class LoaderSub extends Subsystem {
     // setDefaultCommand(new MySpecialCommand());
   }
 
-public void liftDown() {
+public static void liftDown() {
     oneLifter.set(false);
   }
 }

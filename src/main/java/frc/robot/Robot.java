@@ -49,7 +49,6 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 
 import com.revrobotics.ColorSensorV3;
 import com.revrobotics.ColorMatchResult;
-import com.revrobotics.ColorMatchResult;
 import edu.wpi.first.wpilibj.util.Color;
 
 /**
@@ -73,6 +72,7 @@ public class Robot extends TimedRobot {
   public static LoaderSub loader = new LoaderSub();
   public NetworkTableEntry targetYaw;
   public NetworkTableEntry isDriverMode;
+  public NetworkTableEntry isValid;
   //public static CargoLoader cargoLoader = new CargoLoader();
   //public static HatchRelease hatchRelease = new HatchRelease();
   //public static ElevatorTilt elevatorTilt = new ElevatorTilt();
@@ -108,11 +108,12 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     //camera = CameraServer.getInstance().startAutomaticCapture();
-    m_dutyCycleEncoder.reset();
+    
 
     m_oi = new OI();
 
     m_dutyCycleEncoder.setDistancePerRotation(360);
+    m_dutyCycleEncoder.reset();
     m_distanceSensor.startMeasuring();
 
     NetworkTable MicrosoftCam = NetworkTableInstance.getDefault().getTable("chameleon-vision");
@@ -145,6 +146,10 @@ public class Robot extends TimedRobot {
 
      // Gets the driveMode boolean from the cameraTable
      isDriverMode = cameraTable.getEntry("driver_mode");
+
+     // Gets the isValid boolean from the cameraTable
+
+     isValid = cameraTable.getEntry("isValid");
   
 
 
@@ -191,8 +196,9 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("TurretDistance", EncoderDistance);
     SmartDashboard.putNumber("Lidar Distance", m_distanceSensor.getDistance());
     SmartDashboard.putNumber("targetYaw", targetYaw.getDouble(0.0));
+    SmartDashboard.putBoolean("isValid", isValid.getBoolean(false));
     
-    Color detectedColor = m_colorSensor.getColor();
+    Color detectedColor = m_colorSensor.getColor(); 
 
     /**
      * The sensor returns a raw IR value of the infrared light detected.

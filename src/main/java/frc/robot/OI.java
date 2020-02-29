@@ -72,14 +72,14 @@ public class OI {
 
   public OI() {
     // Experimental
-    twelve.whenPressed(new LoadCmd());
-    ten.whenPressed(new CenterTurretCmd());
+    eight.whenPressed(new LoadCmd());
+    twelve.whenPressed(new CenterTurretCmd());
 
     // thumb.whileHeld(VisionHatch);
     thumb.whileHeld(new IntakeToggle());
     three.whileHeld(new RotateTurretLeft());
     four.whileHeld(new RotateTurretRight());
-    eleven.whileHeld(new AutoRunTarget());
+    eleven.whenPressed(new AutoRunTarget());
     
     // trigger.cancelWhenPressed(VisionHatch);
 

@@ -26,17 +26,17 @@ public class CenterTurretCmd extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    if (SmartDashboard.getNumber("TurretDistance", 132) < 60) {
-      if (SmartDashboard.getNumber("TurretDistance", 132) < 130) {
-        TurretSub.setPower(-0.1);
+    if (SmartDashboard.getNumber("TurretDistance", 132) < 130) {
+      if (SmartDashboard.getNumber("TurretDistance", 132) < 60) {
+        TurretSub.setPower(-0.5);
       } else {
-        TurretSub.setPower(-0.4);
+        TurretSub.setPower(-0.25);
       }
     } else if (SmartDashboard.getNumber("TurretDistance", 132) > 135) {
       if (SmartDashboard.getNumber("TurretDistance", 132) > 200) {
-        TurretSub.setPower(0.4);
+        TurretSub.setPower(0.5);
       } else {
-        TurretSub.setPower(0.1);
+        TurretSub.setPower(0.25);
       }
     } else {
       TurretSub.setPower(0);
