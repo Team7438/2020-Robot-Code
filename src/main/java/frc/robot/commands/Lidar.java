@@ -26,7 +26,6 @@ public class Lidar extends Command {
   protected void initialize() {
     
     m_distanceSensor.startMeasuring();
-      System.out.println("STARTING");
       
   }
 

@@ -1,4 +1,6 @@
 package frc.robot.jlVision;
+import org.opencv.core.Point;
+import frc.robot.*;
 
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -31,7 +33,7 @@ public class AlignVisionTarget {
 
     private static double turnRate(double p) {
 
-        tempPower = Math.abs(p / 10);
+        tempPower = Math.abs(p / 12);
 
         if (tempPower < 0.05) {
             return 0;
@@ -39,8 +41,8 @@ public class AlignVisionTarget {
 
         if (tempPower < 0.1) {
             tempPower = 0.1;
-        } else if (tempPower > 0.5) {
-            tempPower = 0.5;
+        } else if (tempPower > 0.6) {
+            tempPower = 0.6;
         }
 
         if (p > 0) {
@@ -55,9 +57,16 @@ public class AlignVisionTarget {
 
     public static double AugmentedDriverInterface() {
         tempVar = SmartDashboard.getNumber("targetYaw", 0);
+
+        Point delta = new Point();
+        if(Robot.shooter0.trainOnTraget(delta)) {
+        // rotate turret by delta.x degrees relative to current position
+        // pitch the shooter by delta.y degrees relative to current position
+
+        }
+
         //System.out.println("TARGET: " + tempVar);
         turnPower = turnRate(tempVar);
-        System.out.println(turnPower);
         return turnPower;
     }
 

@@ -8,52 +8,65 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
-import frc.robot.subsystems.LoaderSub;
+import frc.robot.subsystems.TurretSub;
 
-import java.util.concurrent.TimeUnit;
+public class CenterTurretCmd extends Command {
 
-public class LoadCmd extends Command {
 
-  int timer = 0; // 1 = 20ms
-
-  public LoadCmd() {
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
+  public CenterTurretCmd() {
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    LoaderSub.liftUp();
-    timer = 0;
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    timer += 1;
-  }
+    if (SmartDashboard.getNumber("TurretDistance", 132) < 130) {
+      if (SmartDashboard.getNumber("TurretDistance", 132) < 60) {
+        TurretSub.setPower(-0.5);
+      } else {
+        TurretSub.setPower(-0.25);
+      }
+    } else if (SmartDashboard.getNumber("TurretDistance", 132) > 135) {
+      if (SmartDashboard.getNumber("TurretDistance", 132) > 200) {
+        TurretSub.setPower(0.5);
+      } else {
+        TurretSub.setPower(0.25);
+      }
+    } else {
+      TurretSub.setPower(0);
+    }
+  } 
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    if (timer < 25){
-      return false;
+    if (SmartDashboard.getNumber("TurretDistance", 132) < 134 && SmartDashboard.getNumber("TurretDistance", 132) > 130) {
+      return true;
     } else {
-      return  true;
+      return false;
     }
+    //return Robot.limitSwitch.get();
+    //return Robot.cargoLoader.isSwitchSet();
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    LoaderSub.liftDown();
+    TurretSub.stopRotate();
+    // Console.WriteLine("Text to print");
+
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    TurretSub.stopRotate();
   }
 }

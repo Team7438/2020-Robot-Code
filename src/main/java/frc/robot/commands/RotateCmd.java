@@ -80,12 +80,12 @@ public class RotateCmd extends Command {
     // System.out.print("Turning Speed:    ");
     // System.out.println(turningSpeed);
     if(Math.abs(goalAngle - currentAngle) < tolerance) {  //if within tolerance
-    	DriveSub.betterArcadeDrive(0, 0);
+    	DriveSub.arcadeDrive(0, 0);
     	isDone = true;
     } else if(currentAngle < goalAngle) {  //If left of target angle 
-        DriveSub.betterArcadeDrive(0, turningSpeed);  //turn clockwise
+        DriveSub.arcadeDrive(0, turningSpeed);  //turn clockwise
     } else if(currentAngle > goalAngle){  //If right of target angle
-        DriveSub.betterArcadeDrive(0, -turningSpeed);  //turn counterclockwise
+        DriveSub.arcadeDrive(0, -turningSpeed);  //turn counterclockwise
     }
   }
 

@@ -5,6 +5,8 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
+//Cameras to change, line 86, 132
+
 package frc.robot;
 
 import com.kauailabs.navx.frc.AHRS;
@@ -45,6 +47,10 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
+import com.revrobotics.ColorSensorV3;
+import com.revrobotics.ColorMatchResult;
+import edu.wpi.first.wpilibj.util.Color;
+
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the TimedRobot
@@ -66,6 +72,7 @@ public class Robot extends TimedRobot {
   public static LoaderSub loader = new LoaderSub();
   public NetworkTableEntry targetYaw;
   public NetworkTableEntry isDriverMode;
+  public NetworkTableEntry isValid;
   //public static CargoLoader cargoLoader = new CargoLoader();
   //public static HatchRelease hatchRelease = new HatchRelease();
   //public static ElevatorTilt elevatorTilt = new ElevatorTilt();
@@ -80,6 +87,11 @@ public class Robot extends TimedRobot {
   public final DutyCycleEncoder m_dutyCycleEncoder = new DutyCycleEncoder(4);
   // Lidar
   public final LIDARLite m_distanceSensor = new LIDARLite(I2C.Port.kOnboard);
+  //Color Sensor
+  private final I2C.Port i2Cport = I2C.Port.kMXP;
+  private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2Cport);
+
+  public static Shooter shooter0 = new Shooter(0, "New Camera", "http://raspberrypi.local:1181/?action=stream");
   // public static PIDElevator pIDElevatorWinch = new PIDElevator();
   // public static DoubleSolenoid hatchPusher = new DoubleSolenoid(RobotMap.hatchSole1, RobotMap.hatchSole2);
 
@@ -96,10 +108,12 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     //camera = CameraServer.getInstance().startAutomaticCapture();
+    
 
     m_oi = new OI();
 
-    m_dutyCycleEncoder.setDistancePerRotation(5);
+    m_dutyCycleEncoder.setDistancePerRotation(360);
+    m_dutyCycleEncoder.reset();
     m_distanceSensor.startMeasuring();
 
     NetworkTable MicrosoftCam = NetworkTableInstance.getDefault().getTable("chameleon-vision");
@@ -125,13 +139,17 @@ public class Robot extends TimedRobot {
 
      // Gets the MyCamName table under the chamelon-vision table
      // MyCamName will vary depending on the name of your camera
-     NetworkTable cameraTable = table.getTable("chameleon-vision").getSubTable("LifeCam");
+     NetworkTable cameraTable = table.getTable("chameleon-vision").getSubTable("New Camera");
 
      // Gets the yaw to the target from the cameraTable
      targetYaw = cameraTable.getEntry("targetYaw");
 
      // Gets the driveMode boolean from the cameraTable
      isDriverMode = cameraTable.getEntry("driver_mode");
+
+     // Gets the isValid boolean from the cameraTable
+
+     isValid = cameraTable.getEntry("isValid");
   
 
 
@@ -175,12 +193,33 @@ public class Robot extends TimedRobot {
 
 
     SmartDashboard.putBoolean("Connected", isEncoderConnected);
-    SmartDashboard.putNumber("Frequency", EncoderFrequency);
-    SmartDashboard.putNumber("Output", EncoderOutput);
-    SmartDashboard.putNumber("Distance", EncoderDistance);
+    SmartDashboard.putNumber("TurretDistance", EncoderDistance);
     SmartDashboard.putNumber("Lidar Distance", m_distanceSensor.getDistance());
     SmartDashboard.putNumber("targetYaw", targetYaw.getDouble(0.0));
+    SmartDashboard.putBoolean("isValid", isValid.getBoolean(false));
+    
+    Color detectedColor = m_colorSensor.getColor(); 
 
+    /**
+     * The sensor returns a raw IR value of the infrared light detected.
+     */
+    double IR = m_colorSensor.getIR();
+
+    /**
+     * Open Smart Dashboard or Shuffleboard to see the color detected by the 
+     * sensor.
+     */
+    SmartDashboard.putNumber("Red", detectedColor.red);
+    SmartDashboard.putNumber("Green", detectedColor.green);
+    SmartDashboard.putNumber("Blue", detectedColor.blue);
+    SmartDashboard.putNumber("IR", IR);
+
+    /**
+     * Color Sensor Proximity
+     */
+    int proximity = m_colorSensor.getProximity();
+
+    SmartDashboard.putNumber("Proximity", proximity);
 
     //Robot.elevatorWinch.eleEncoderUpdate();
     //Robot.elevatorWinch.updateElevatorStatus();
