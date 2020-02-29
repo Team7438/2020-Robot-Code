@@ -8,6 +8,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotMap;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -17,19 +18,48 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
  * Add your docs here.
  */
 
+
 public class TurretSub extends Subsystem {
     public static VictorSPX turretYaw = new VictorSPX(RobotMap.turretYaw);
+    private static double turretSpeed = 0.6;
 
   public static void RotateLeft() {
-    turretYaw.set(ControlMode.PercentOutput, 0.2);
+    if (SmartDashboard.getNumber("TurretDistance", 0) <= -730) {
+      turretYaw.set(ControlMode.PercentOutput, 0);
+    } else {
+      turretYaw.set(ControlMode.PercentOutput, turretSpeed);
+    }
   }
 
   public static void RotateRight() {
-    turretYaw.set(ControlMode.PercentOutput, -0.2);
+    if (SmartDashboard.getNumber("TurretDistance", 0) >= 1110) {
+      turretYaw.set(ControlMode.PercentOutput, 0);
+    } else {
+      turretYaw.set(ControlMode.PercentOutput, -turretSpeed);
+    }
   }
 
   public static void setPower(double d) {
     turretYaw.set(ControlMode.PercentOutput, d);
+
+    if (SmartDashboard.getNumber("TurretDistance", -100000) <= -730) {
+      if (d < 0) {
+        turretYaw.set(ControlMode.PercentOutput, d);
+      } else if (d > 0) {
+        turretYaw.set(ControlMode.PercentOutput, 0);
+      } else {
+        turretYaw.set(ControlMode.PercentOutput, 0);
+      }
+    } else if (SmartDashboard.getNumber("TurretDistance", 100000) >= 1110) {
+      if (d < 0) {
+        turretYaw.set(ControlMode.PercentOutput, 0);
+      } else if (d > 0) {
+        turretYaw.set(ControlMode.PercentOutput, d);
+      } else {
+        turretYaw.set(ControlMode.PercentOutput, 0);
+      }
+    }
+
   }
 
   public static void stopRotate() {

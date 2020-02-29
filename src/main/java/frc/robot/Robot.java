@@ -91,7 +91,7 @@ public class Robot extends TimedRobot {
   private final I2C.Port i2Cport = I2C.Port.kMXP;
   private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2Cport);
 
-  public static Shooter shooter0 = new Shooter(0, "HD USB Camera", "http://raspberrypi.local:1181/?action=stream");
+  public static Shooter shooter0 = new Shooter(0, "New Camera", "http://raspberrypi.local:1181/?action=stream");
   // public static PIDElevator pIDElevatorWinch = new PIDElevator();
   // public static DoubleSolenoid hatchPusher = new DoubleSolenoid(RobotMap.hatchSole1, RobotMap.hatchSole2);
 
@@ -108,10 +108,11 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     //camera = CameraServer.getInstance().startAutomaticCapture();
+    m_dutyCycleEncoder.reset();
 
     m_oi = new OI();
 
-    m_dutyCycleEncoder.setDistancePerRotation(5);
+    m_dutyCycleEncoder.setDistancePerRotation(360);
     m_distanceSensor.startMeasuring();
 
     NetworkTable MicrosoftCam = NetworkTableInstance.getDefault().getTable("chameleon-vision");
@@ -137,7 +138,7 @@ public class Robot extends TimedRobot {
 
      // Gets the MyCamName table under the chamelon-vision table
      // MyCamName will vary depending on the name of your camera
-     NetworkTable cameraTable = table.getTable("chameleon-vision").getSubTable("HD USB Camera");
+     NetworkTable cameraTable = table.getTable("chameleon-vision").getSubTable("New Camera");
 
      // Gets the yaw to the target from the cameraTable
      targetYaw = cameraTable.getEntry("targetYaw");
@@ -187,9 +188,7 @@ public class Robot extends TimedRobot {
 
 
     SmartDashboard.putBoolean("Connected", isEncoderConnected);
-    SmartDashboard.putNumber("Frequency", EncoderFrequency);
-    SmartDashboard.putNumber("Output", EncoderOutput);
-    SmartDashboard.putNumber("Distance", EncoderDistance);
+    SmartDashboard.putNumber("TurretDistance", EncoderDistance);
     SmartDashboard.putNumber("Lidar Distance", m_distanceSensor.getDistance());
     SmartDashboard.putNumber("targetYaw", targetYaw.getDouble(0.0));
     
