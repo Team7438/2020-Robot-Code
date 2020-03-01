@@ -326,7 +326,7 @@ public class Shooter {
         double x = target_distance*Math.sin(Math.PI*pitch/180.0f);  // in meters
         // or use horiz_distance directly if provided (but convert from cm to meters)
         if (horiz_distance > 0)
-            x = horiz_distance *100.0f; // * 0.0254;  old: inches
+            x = horiz_distance *0.01f; // * 0.0254;  old: inches
 
         // convert velocity from feet to meters
         velocity *= 0.3048;
