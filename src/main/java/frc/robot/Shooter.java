@@ -190,21 +190,33 @@ public class Shooter {
 
         // manual calibration
         if (HD_format) { // HD ratio
-            calibLenX = 100;
-            calibLenY = 50;
+            // shooter axis offset
+            if (camera_id == 0) {  // camera.0 is to the left, camera.1 to the right
+                calibLenX = -100;
+                calibLenY = -50;
+            } else {
+                calibLenX = 100;
+                calibLenY = -50;
+            }
 
             FOV_h_hor = 36.0;
             FOV_h_ver = 20.0;
         } else { // 0.75 ratio
-            calibLenX = 100;
-            calibLenY = 100;
+            // shooter axis offset
+            if (camera_id == 0) {
+                calibLenX = -100;
+                calibLenY = -100;
+            } else {
+                calibLenX = 100;
+                calibLenY = -100;
+            }
 
             FOV_h_hor = 36.0;
             FOV_h_ver = 24.0;
         }
 
-        calibDist = camera_id == 0 ? 2.0f : 2.7f; // meters
-        calibBoundingWidth = camera_id == 0 ? 310.0f : 370f; // in pixels
+        calibDist = camera_id == 0 ? 1.0f : 1.7f; // meters
+        calibBoundingWidth = camera_id == 0 ? 435.0f : 370f; // in pixels
 
         // source.setTo(new Scalar(0,0,0));  // clear image
 
@@ -230,13 +242,16 @@ public class Shooter {
         if(pose[0] == 0.0 && pose[1] == 0.0) targetVisible = false;
         if( ! targetVisible) distance = 2.0;
         // System.out.println("TargetDistance: " + distance);
+        // distance_horiz is in cm
+        double distance_horiz = chameleon_table.getEntry("NT_LOC_HERE/distance_horiz").getDouble(-1.0);  // TODO get from NT
+
 
         // shooterSight is the point on the screen where the shooter axis intersects image plane (in pixels)
         // shooter is located to the left and up of camera axis
         // lineraly interpolate the position based on manual calibration: relative to: top edge length in pixels at calibration distance
         Point shooterSight = new Point(0,0);
-        shooterSight.x = displayed_frame_h_width  - calibLenX * distance/calibDist;
-        shooterSight.y = displayed_frame_h_height - calibLenY * distance/calibDist;
+        shooterSight.x = displayed_frame_h_width  + calibLenX * distance/calibDist;
+        shooterSight.y = displayed_frame_h_height + calibLenY * distance/calibDist;
 
         double shooterYaw   = Math.asin((shooterSight.x/displayed_frame_h_width -1.0f)*Math.sin(FOV_h_hor*Math.PI/180.0f))*180.0f/Math.PI;
         double shooterPitch = Math.asin((1.0f-shooterSight.y/displayed_frame_h_height)*Math.sin(FOV_h_ver*Math.PI/180.0f))*180.0f/Math.PI;
@@ -246,7 +261,6 @@ public class Shooter {
             Imgproc.circle(source, shooterSight, 20, new Scalar(0,255,255), 5);
 
         double velocity = 10.0f;  // TODO get from NT
-        double distance_horiz = chameleon_table.getEntry("NT_LOC_HERE/distance_horiz").getDouble(-1.0);  // TODO get from NT
         double scale = (calibBoundingWidth/hexgon_width_inches) * (distance / calibDist);  // scale from inches to pixels (linear interp)
         Point ballisticTarget = balistic_adjustment(shooterSight, distance, distance_horiz, velocity, shooterPitch, scale);
 
@@ -298,7 +312,7 @@ public class Shooter {
     // target_distance is distance to target, horiz_distance is horizontal distance to target
     // if both positive, use horiz_distance
     // target_distance in meters (from Chameleon)
-    // horiz_distance in inches (from range finder)
+    // horiz_distance in cm (from range finder)
     // velocity in feet/sec
     private Point balistic_adjustment(Point shooterTarget, double target_distance, double horiz_distance, double velocity, double pitch, double scale) {
 
@@ -310,9 +324,9 @@ public class Shooter {
 
         // calculate hosrizontal distance to target from target_distance
         double x = target_distance*Math.sin(Math.PI*pitch/180.0f);  // in meters
-        // or use horiz_distance directly if provided (but convert from inches to meters)
+        // or use horiz_distance directly if provided (but convert from cm to meters)
         if (horiz_distance > 0)
-            x = horiz_distance * 0.0254;
+            x = horiz_distance *0.01f; // * 0.0254;  old: inches
 
         // convert velocity from feet to meters
         velocity *= 0.3048;
