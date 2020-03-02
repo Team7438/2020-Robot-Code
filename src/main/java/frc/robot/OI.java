@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import frc.robot.commands.Lidar;
 import frc.robot.commands.LoadCmd;
 import frc.robot.commands.CenterTurretCmd;
+import frc.robot.commands.ConveyerInCmd;
+import frc.robot.commands.ConveyerOutCmd;
 import frc.robot.commands.IntakeToggle;
 import frc.robot.commands.RotateTurretLeft;
 import frc.robot.commands.RotateTurretRight;
@@ -80,6 +82,8 @@ public class OI {
     three.whileHeld(new RotateTurretLeft());
     four.whileHeld(new RotateTurretRight());
     eleven.whenPressed(new AutoRunTarget());
+    five.whileHeld(new ConveyerInCmd());
+    six.whileHeld(new ConveyerOutCmd());
     
     // trigger.cancelWhenPressed(VisionHatch);
 

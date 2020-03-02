@@ -91,7 +91,11 @@ public class DriveSub extends Subsystem {
     // Run motors in parallel
 
     public static void arcadeDrive(double xSpeed, double zRotation) {
-      DriveBase.arcadeDrive(xSpeed, zRotation);
+      if (!disableDrive) {
+        DriveBase.arcadeDrive(xSpeed, zRotation);
+      } else {
+        DriveBase.arcadeDrive(0, 0);
+      }
     }
 
     public void robotDriver(Joystick joystickZero){
@@ -118,7 +122,11 @@ public class DriveSub extends Subsystem {
       //This next line overrides all the other stuff and feeds straight joystic values.
       //zAdjustedValue=zValue;
       //Used to be adjusted value, changed to yValue to make it faster.
-      DriveBase.arcadeDrive(yValue * -1, zValue/1.25);
+      if (!disableDrive) {
+        DriveBase.arcadeDrive(yValue * -1, zValue/1.25);
+      } else {
+        DriveBase.arcadeDrive(0, 0);
+      }
       //DriveBase.arcadeDrive(squareInput(-joystickZero.getY())/3, squareInput(joystickZero.getZ())/3);
       //centerMotor.setSpeed(-joystickZero.getX()/2);
     }

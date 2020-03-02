@@ -1,8 +1,7 @@
 package frc.robot.jlVision;
 import org.opencv.core.Point;
 import frc.robot.*;
-
-
+import frc.robot.subsystems.TurretSub;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class AlignVisionTarget {
@@ -25,6 +24,8 @@ public class AlignVisionTarget {
 
     public volatile double timestamp=0, lastLockTime=0;
     public volatile boolean isConnected;
+
+    private static double distanceToTravel = 0;
 
     public void AugmentedDriving() {
         //Filler
@@ -69,6 +70,24 @@ public class AlignVisionTarget {
         //System.out.println("TARGET: " + tempVar);
         turnPower = turnRate(tempVar);
         return turnPower;
+    }
+
+    public static void gotoEncoderValue(double EUGo) {
+        // Get distance between the EU to go.
+        distanceToTravel = SmartDashboard.getNumber("TurretDistance", 132) - EUGo;
+        turnPower = Math.abs(distanceToTravel)/20;
+        //System.out.println(turnPower);
+        if (turnPower > 0.7) {
+            turnPower = 0.7;
+        }
+        if (turnPower < 0.1) {
+            turnPower = 0.1;
+        }
+        if (distanceToTravel < 0) {
+            TurretSub.setPower(-turnPower);
+        } else {
+            TurretSub.setPower(turnPower);
+        }
     }
 
 }

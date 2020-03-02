@@ -21,7 +21,8 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 public class TurretSub extends Subsystem {
     public static VictorSPX turretYaw = new VictorSPX(RobotMap.turretYaw);
-    private static double turretSpeed = 0.6;
+    // Turret speed
+    private static double turretSpeed = 0.2;
 
   public static void RotateLeft() {
     if (SmartDashboard.getNumber("TurretDistance", 0) <= -730) {

@@ -49,8 +49,13 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
 import com.revrobotics.ColorSensorV3;
+import com.revrobotics.Rev2mDistanceSensor;
 import com.revrobotics.ColorMatchResult;
 import edu.wpi.first.wpilibj.util.Color;
+
+import com.revrobotics.Rev2mDistanceSensor.Port;
+import com.revrobotics.*;
+import com.revrobotics.Rev2mDistanceSensor.RangeProfile;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -61,6 +66,8 @@ import edu.wpi.first.wpilibj.util.Color;
  */
 
 public class Robot extends TimedRobot {
+
+  
 
   public static final String MecanumDriver = null;
   public static OI m_oi;
@@ -88,8 +95,8 @@ public class Robot extends TimedRobot {
   // Lidar
   public final LIDARLite m_distanceSensor = new LIDARLite(I2C.Port.kOnboard);
   // Color Sensor
-  private final I2C.Port i2Cport = I2C.Port.kMXP;
-  private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2Cport);
+  //private final I2C.Port i2Cport = I2C.Port.kMXP;
+  //private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2Cport);
 
   public static Shooter shooter0 = new Shooter(0, "New Camera", "http://raspberrypi.local:1181/?action=stream");
   // public static PIDElevator pIDElevatorWinch = new PIDElevator();
@@ -102,6 +109,9 @@ public class Robot extends TimedRobot {
   Command m_autonomousCommand;
   SendableChooser<Command> m_chooser = new SendableChooser<>();
 
+// 2m distance sensor
+  private Rev2mDistanceSensor distSens;
+
   /**
    * This function is run when the robot is first started up and should be used
    * for any initialization code.
@@ -109,6 +119,12 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+
+    //2m distance sensor
+    distSens = new Rev2mDistanceSensor(Port.kMXP);
+    distSens.setAutomaticMode(true);
+    distSens.setRangeProfile(RangeProfile.kHighSpeed);
+    
     
 
     m_oi = new OI();
@@ -199,28 +215,33 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("targetYaw", targetYaw.getDouble(0.0));
     SmartDashboard.putBoolean("isValid", isValid.getBoolean(false));
     
-    Color detectedColor = m_colorSensor.getColor(); 
+    //Color detectedColor = m_colorSensor.getColor(); 
+
+    //2m distance sensor
+    SmartDashboard.putNumber("Range2M", distSens.getRange());
+
+
 
     /**
      * The sensor returns a raw IR value of the infrared light detected.
      */
-    double IR = m_colorSensor.getIR();
+    //double IR = m_colorSensor.getIR();
 
     /**
      * Open Smart Dashboard or Shuffleboard to see the color detected by the 
      * sensor.
      */
-    SmartDashboard.putNumber("Red", detectedColor.red);
-    SmartDashboard.putNumber("Green", detectedColor.green);
-    SmartDashboard.putNumber("Blue", detectedColor.blue);
-    SmartDashboard.putNumber("IR", IR);
+    // SmartDashboard.putNumber("Red", detectedColor.red);
+    // SmartDashboard.putNumber("Green", detectedColor.green);
+    // SmartDashboard.putNumber("Blue", detectedColor.blue);
+    // SmartDashboard.putNumber("IR", IR);
 
     /**
      * Color Sensor Proximity
      */
-    int proximity = m_colorSensor.getProximity();
+    //int proximity = m_colorSensor.getProximity();
 
-    SmartDashboard.putNumber("Proximity", proximity);
+    //SmartDashboard.putNumber("Proximity", proximity);
 
     //Robot.elevatorWinch.eleEncoderUpdate();
     //Robot.elevatorWinch.updateElevatorStatus();

@@ -29,6 +29,10 @@ public class RobotMap {
   //Turret
   public static int turretYaw = 8;
 
+  //Conveyer Motors
+  public static int Conveyer1 = 52;
+  public static int Conveyer2 = 53;
+
   //Climb Motors
   public static int climbFront = 6;
 
