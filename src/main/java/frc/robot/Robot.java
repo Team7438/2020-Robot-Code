@@ -28,6 +28,7 @@ import frc.robot.commands.DriveCmd;
 //import frc.robot.commands.ResetElevatorEncoderCommand;
 import frc.robot.subsystems.DriveSub;
 import frc.robot.subsystems.LoaderSub;
+import frc.robot.MultiplexedColorSensor;
 //import frc.robot.subsystems.ElevatorTilt;
 //import frc.robot.subsystems.ElevatorWinch;
 //import frc.robot.subsystems.CargoLoader;
@@ -42,6 +43,7 @@ import frc.robot.subsystems.LoaderSub;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import frc.robot.LIDARLite;
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTable;
@@ -53,9 +55,8 @@ import com.revrobotics.Rev2mDistanceSensor;
 import com.revrobotics.ColorMatchResult;
 import edu.wpi.first.wpilibj.util.Color;
 
-import com.revrobotics.Rev2mDistanceSensor.Port;
-import com.revrobotics.*;
-import com.revrobotics.Rev2mDistanceSensor.RangeProfile;
+//import com.revrobotics.Rev2mDistanceSensor.Port;
+//import com.revrobotics.Rev2mDistanceSensor.RangeProfile;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -67,7 +68,10 @@ import com.revrobotics.Rev2mDistanceSensor.RangeProfile;
 
 public class Robot extends TimedRobot {
 
+  //TEMP DELETE LATER
   
+  //END TEMP
+
 
   public static final String MecanumDriver = null;
   public static OI m_oi;
@@ -80,6 +84,9 @@ public class Robot extends TimedRobot {
   public NetworkTableEntry targetYaw;
   public NetworkTableEntry isDriverMode;
   public NetworkTableEntry isValid;
+  public static Integer distance0=5;
+  public static Integer distance1=6;
+
   // public static CargoLoader cargoLoader = new CargoLoader();
   // public static HatchRelease hatchRelease = new HatchRelease();
   // public static ElevatorTilt elevatorTilt = new ElevatorTilt();
@@ -94,11 +101,15 @@ public class Robot extends TimedRobot {
   public final DutyCycleEncoder m_dutyCycleEncoder = new DutyCycleEncoder(4);
   // Lidar
   public final LIDARLite m_distanceSensor = new LIDARLite(I2C.Port.kOnboard);
-  // Color Sensor
-  private final I2C.Port i2Cport = I2C.Port.kMXP;
-  private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2Cport);
 
+  
+  
+
+ 
+  //Uncomment for correct connecton to shooter0 camera and delta feed
+  //public static Shooter shooter0 = new Shooter(0, "New Camera", "http://10.74.38.11:1181/?action=stream");
   public static Shooter shooter0 = new Shooter(0, "New Camera", "http://raspberrypi.local:1181/?action=stream");
+  
   // public static PIDElevator pIDElevatorWinch = new PIDElevator();
   // public static DoubleSolenoid hatchPusher = new
   // DoubleSolenoid(RobotMap.hatchSole1, RobotMap.hatchSole2);
@@ -120,13 +131,11 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
 
-    //2m distance sensor
-    distSens = new Rev2mDistanceSensor(Port.kMXP);
-    distSens.setAutomaticMode(true);
-    distSens.setRangeProfile(RangeProfile.kHighSpeed);
+    //2m distance sensor - Not Working
+    //distSens = new Rev2mDistanceSensor(Port.kMXP);
+    //distSens.setAutomaticMode(true);
+    //distSens.setRangeProfile(RangeProfile.kHighSpeed);
     
-    
-
     m_oi = new OI();
 
     m_dutyCycleEncoder.setDistancePerRotation(360);
@@ -214,34 +223,41 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Lidar Distance", m_distanceSensor.getDistance());
     SmartDashboard.putNumber("targetYaw", targetYaw.getDouble(0.0));
     SmartDashboard.putBoolean("isValid", isValid.getBoolean(false));
-    
-    Color detectedColor = m_colorSensor.getColor(); 
 
-    //2m distance sensor
-    SmartDashboard.putNumber("Range2M", distSens.getRange());
+    
+
+    // SmartDashboard.putString("TESTING TESTING", colorSensor0.toString());
+  
+
+
+    //using multiplexed values above
+    //Color detectedColor = m_colorSensor.getColor(); 
+
+    //2m distance sensor -- not working
+    //SmartDashboard.putNumber("Range2M", distSens.getRange());
 
 
 
     /**
      * The sensor returns a raw IR value of the infrared light detected.
      */
-    double IR = m_colorSensor.getIR();
+    //double IR = m_colorSensor.getIR();
 
     /**
      * Open Smart Dashboard or Shuffleboard to see the color detected by the 
      * sensor.
      */
-    SmartDashboard.putNumber("Red", detectedColor.red);
-    SmartDashboard.putNumber("Green", detectedColor.green);
-    SmartDashboard.putNumber("Blue", detectedColor.blue);
-    SmartDashboard.putNumber("IR", IR);
+    //using multiplexed values above
+    //SmartDashboard.putNumber("Red", detectedColor.red);
+    //SmartDashboard.putNumber("Green", detectedColor.green);
+    //SmartDashboard.putNumber("Blue", detectedColor.blue);
+    //SmartDashboard.putNumber("IR", IR);
 
     /**
      * Color Sensor Proximity
      */
-    int proximity = m_colorSensor.getProximity();
-
-    SmartDashboard.putNumber("Proximity", proximity);
+    //using multiplexer valuse above
+    //int proximity = m_colorSensor.getProximity();
 
     //Robot.elevatorWinch.eleEncoderUpdate();
     //Robot.elevatorWinch.updateElevatorStatus();

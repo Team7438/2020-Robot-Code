@@ -13,12 +13,17 @@ import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import frc.robot.commands.Lidar;
 import frc.robot.commands.LoadCmd;
+import frc.robot.commands.PitchDownCmd;
+import frc.robot.commands.PitchUpCmd;
+import frc.robot.commands.BallCountCmd;
 import frc.robot.commands.CenterTurretCmd;
 import frc.robot.commands.ConveyerInCmd;
 import frc.robot.commands.ConveyerOutCmd;
 import frc.robot.commands.IntakeToggle;
 import frc.robot.commands.RotateTurretLeft;
 import frc.robot.commands.RotateTurretRight;
+import frc.robot.commands.ShooterMotorsCmd;
+import frc.robot.commands.ShooterPistonCmd;
 import frc.robot.jlVision.AlignVisionTarget;
 import frc.robot.jlVision.AutoRunTarget;
 
@@ -73,17 +78,26 @@ public class OI {
   // three ways:
 
   public OI() {
-    // Experimental
+    // Current
     eight.whenPressed(new LoadCmd());
-    twelve.whenPressed(new CenterTurretCmd());
-
-    // thumb.whileHeld(VisionHatch);
-    thumb.whileHeld(new IntakeToggle());
+    seven.whileHeld(new IntakeToggle());
     three.whileHeld(new RotateTurretLeft());
     four.whileHeld(new RotateTurretRight());
-    eleven.whenPressed(new AutoRunTarget());
+    nine.whenPressed(new AutoRunTarget());
+    ten.whenPressed(new CenterTurretCmd());
     five.whileHeld(new ConveyerInCmd());
     six.whileHeld(new ConveyerOutCmd());
+
+    // eleven.whileHeld(new PitchDownCmd());
+    // twelve.whileHeld(new PitchUpCmd());
+    // thumb.whileHeld(new ShooterMotorsCmd());
+    // trigger.whenPressed(new ShooterPistonCmd());
+    eleven.whenPressed(new BallCountCmd());
+
+
+
+    //OLD
+
     
     // trigger.cancelWhenPressed(VisionHatch);
 

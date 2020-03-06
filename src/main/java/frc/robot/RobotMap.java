@@ -28,6 +28,7 @@ public class RobotMap {
 
   //Turret
   public static int turretYaw = 8;
+  public static int turretPitch = 9;
 
   //Conveyer Motors
   public static int Conveyer1 = 52;
@@ -49,9 +50,16 @@ public class RobotMap {
   public static int elevatorEncoderPort1 = 4;
   public static int elevatorEncoderPort2 = 5;
 
+  // Coolor Sensors
+  public static int colorSensorRamp1 = 1;
 
   //Solenoid Valves for Pneumatics
   public static int eleSole1 = 1;
   public static int eleSole2 = 0;
   public static int lifterSole3 = 3; //Ball Lifter Piston
+  public static int shooterSole2 = 2; //Shooter piston
+
+  //Shooter Wheels
+  public static int shooterWheel1 = 6;
+  public static int shooterWheel2 = 7;
 }

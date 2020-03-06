@@ -34,7 +34,7 @@ public class DriveSub extends Subsystem {
   // -------------------
   // -------------------
   //DISABLE DRIVE BOOLEAN
-  public static Boolean disableDrive = false;
+  public static Boolean disableDrive = true;
   //DISABLE DRIVE BOOLEAN
   // -------------------
   // -------------------

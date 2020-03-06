@@ -29,10 +29,17 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.MultiplexedColorSensor;
 import frc.robot.Robot;
 import frc.robot.subsystems.TurretSub;
+import frc.robot.subsystems.ConveyerSub;
+import edu.wpi.first.wpilibj.I2C;
 
 public class BallCountCmd extends Command {
+
+  //Sensors
+  MultiplexedColorSensor colorSensor0 = new MultiplexedColorSensor(I2C.Port.kMXP, 0);
+  MultiplexedColorSensor colorSensor1 = new MultiplexedColorSensor(I2C.Port.kMXP, 1);
 
   //Sensor ball detection
   private Boolean sensor1BallDetected;
@@ -40,7 +47,7 @@ public class BallCountCmd extends Command {
   private Boolean sensor3BallDetected;
   private Boolean sensor4BallDetected;
   private Boolean sensor5BallDetected;
-
+ 
   //Sensor raw values
   private double sensor1RawValue = 0.0;
   private double sensor2RawValue = 0.0;
@@ -49,8 +56,8 @@ public class BallCountCmd extends Command {
   private double sensor5RawValue = 0.0;
 
   //Ball detection threshold
-  private double sensorUpperThreshold = 700.00;
-  private double sensorLowerThreshold = 100.00;
+  private double sensorUpperThreshold = 500.00;
+  private double sensorLowerThreshold = 180.00;
 
   public BallCountCmd() {
   }
@@ -64,6 +71,12 @@ public class BallCountCmd extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+
+    sensor1RawValue = colorSensor0.getProximity();
+    sensor2RawValue = colorSensor1.getProximity();
+    
+
+
     //Update sensorBallDetected booleans
     if (sensor1RawValue >= sensorUpperThreshold) {
       sensor1BallDetected = true;
@@ -96,6 +109,11 @@ public class BallCountCmd extends Command {
     }
 
     //If ball is detected in intake
+    if (!sensor2BallDetected) {
+      ConveyerSub.Rollin();
+    } else {
+      ConveyerSub.RollStop();
+    }
     
 
 
