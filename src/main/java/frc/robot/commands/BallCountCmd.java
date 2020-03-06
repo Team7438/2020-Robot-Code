@@ -32,6 +32,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.MultiplexedColorSensor;
 import frc.robot.Robot;
 import frc.robot.subsystems.TurretSub;
+import frc.robot.subsystems.BallManagementSub;
 import frc.robot.subsystems.ConveyerSub;
 import edu.wpi.first.wpilibj.I2C;
 
@@ -58,6 +59,9 @@ public class BallCountCmd extends Command {
   //Ball detection threshold
   private double sensorUpperThreshold = 500.00;
   private double sensorLowerThreshold = 180.00;
+
+  private Boolean runConveyer = false;
+  public Integer ballCount = 0;
 
   public BallCountCmd() {
   }
@@ -109,13 +113,41 @@ public class BallCountCmd extends Command {
     }
 
     //If ball is detected in intake
-    if (!sensor2BallDetected) {
+    if (!sensor1BallDetected) {
+      if (ballCount <= 3) {
+        runConveyer = true;
+      } else if (ballCount == 4) {
+        //Load into preload chamber
+        //Run until sensor 4 detects ball
+      } else if (ballCount == 5) {
+        //Load into chamber
+        //Then preload protocol
+      }
+
+    if (runConveyer) {
       ConveyerSub.Rollin();
     } else {
       ConveyerSub.RollStop();
     }
-    
 
+    //When to stop intake
+    if (ballCount == 0) {
+      if (sensor2BallDetected) {
+        runConveyer = false;
+      }
+    } else if (ballCount == 1) {
+        if (sensor3BallDetected) {
+          runConveyer = false;
+        }
+    } else if (ballCount == 2) {
+      if (sensor4BallDetected) {
+        runConveyer = false;
+      }
+  } else if (ballCount == 3) {
+    //Preload
+  } else if (ballCount == 4) {
+    //Load
+  }
 
   } 
 
