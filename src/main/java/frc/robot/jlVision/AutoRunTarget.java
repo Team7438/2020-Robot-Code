@@ -58,7 +58,7 @@ public class AutoRunTarget extends Command {
     protected void initialize() {
         HPLight.setDirection(Relay.Direction.kForward);
         HPLight.set(Relay.Value.kOn);
-        resetGyroTracker = true;
+        //resetGyroTracker = true;
     }
     @Override
     protected void execute() {
@@ -73,10 +73,8 @@ public class AutoRunTarget extends Command {
                 gyroTrackReady = true;
             } else {
                 System.out.println("1111111");
-                if (HPLight.getDescription() == "kOff") {
                     HPLight.set(Relay.Value.kOn);
-                }
-                fullSearch();
+                //fullSearch();
             }
         }
 

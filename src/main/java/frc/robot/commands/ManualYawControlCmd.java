@@ -9,14 +9,13 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
-import frc.robot.subsystems.IntakeSub;
+import frc.robot.subsystems.TurretSub;
 
-public class IntakeToggle extends Command {
+public class ManualYawControlCmd extends Command {
 
-  private Boolean rollIn;
-
-
-  public IntakeToggle() {
+  public ManualYawControlCmd() {
+    // Use requires() here to declare subsystem dependencies
+    // eg. requires(chassis);
   }
 
   // Called just before this Command runs the first time
@@ -27,22 +26,18 @@ public class IntakeToggle extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    IntakeSub.Rollin();
+    TurretSub.ManualControlYaw();
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
     return false;
-    //return Robot.limitSwitch.get();
-    //return Robot.cargoLoader.isSwitchSet();
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    IntakeSub.RollStop();
-    // Console.WriteLine("Text to print");
 
   }
 
@@ -50,6 +45,5 @@ public class IntakeToggle extends Command {
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    IntakeSub.RollStop();
   }
 }

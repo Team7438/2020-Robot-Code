@@ -41,6 +41,9 @@ public class BallCountCmd extends Command {
   //Sensors
   MultiplexedColorSensor colorSensor0 = new MultiplexedColorSensor(I2C.Port.kMXP, 0);
   MultiplexedColorSensor colorSensor1 = new MultiplexedColorSensor(I2C.Port.kMXP, 1);
+  MultiplexedColorSensor colorSensor2 = new MultiplexedColorSensor(I2C.Port.kMXP, 2);
+  MultiplexedColorSensor colorSensor3 = new MultiplexedColorSensor(I2C.Port.kMXP, 3);
+  MultiplexedColorSensor colorSensor4 = new MultiplexedColorSensor(I2C.Port.kMXP, 4);
 
   //Sensor ball detection
   private Boolean sensor1BallDetected;
@@ -57,11 +60,14 @@ public class BallCountCmd extends Command {
   private double sensor5RawValue = 0.0;
 
   //Ball detection threshold
-  private double sensorUpperThreshold = 500.00;
+  private double sensorUpperThreshold = 390.00;
   private double sensorLowerThreshold = 180.00;
 
   private Boolean runConveyer = false;
   public Integer ballCount = 0;
+  public Integer tempBallCount = 0;
+
+  private Boolean ballToAdd = false;
 
   public BallCountCmd() {
   }
@@ -69,7 +75,7 @@ public class BallCountCmd extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    
+    ballCount = 0;
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -78,11 +84,20 @@ public class BallCountCmd extends Command {
 
     sensor1RawValue = colorSensor0.getProximity();
     sensor2RawValue = colorSensor1.getProximity();
+    sensor3RawValue = colorSensor2.getProximity();
+    sensor4RawValue = colorSensor3.getProximity();
+    sensor5RawValue = colorSensor4.getProximity();
+
+    SmartDashboard.putNumber("Sensor11", sensor1RawValue);
+    SmartDashboard.putNumber("Sensor22", sensor2RawValue);
+    SmartDashboard.putNumber("Sensor33", sensor3RawValue);
+    SmartDashboard.putNumber("Sensor44", sensor4RawValue);
+    SmartDashboard.putNumber("Sensor55", sensor5RawValue);
     
 
 
     //Update sensorBallDetected booleans
-    if (sensor1RawValue >= sensorUpperThreshold) {
+    if (sensor1RawValue >= 300) {
       sensor1BallDetected = true;
     } else if (sensor1RawValue <= sensorLowerThreshold) {
       sensor1BallDetected = false;
@@ -113,41 +128,63 @@ public class BallCountCmd extends Command {
     }
 
     //If ball is detected in intake
-    if (!sensor1BallDetected) {
+    if (sensor1BallDetected) {
       if (ballCount <= 3) {
         runConveyer = true;
-      } else if (ballCount == 4) {
+      } else if (ballCount == 3) {
         //Load into preload chamber
         //Run until sensor 4 detects ball
-      } else if (ballCount == 5) {
+      } else if (ballCount == 4) {
         //Load into chamber
         //Then preload protocol
+      } else {
+        //Don't let the ball in
       }
+
+      if (!ballToAdd) {
+        tempBallCount += 1;
+        ballToAdd = true;
+      }
+
+    }
+
+    System.out.println(ballCount);
 
     if (runConveyer) {
       ConveyerSub.Rollin();
     } else {
       ConveyerSub.RollStop();
+      ballToAdd = false;
     }
 
-    //When to stop intake
+    //When to stop conveyer
     if (ballCount == 0) {
       if (sensor2BallDetected) {
         runConveyer = false;
+        ballCount += tempBallCount;
+        tempBallCount = 0;
       }
     } else if (ballCount == 1) {
-        if (sensor3BallDetected) {
-          runConveyer = false;
+        try {
+          if (sensor3BallDetected) {
+            runConveyer = false;
+            ballCount += tempBallCount;
+            tempBallCount = 0;
+          }
+        } catch (NullPointerException e) {
+          System.out.println("RUh Roh");
         }
     } else if (ballCount == 2) {
       if (sensor4BallDetected) {
         runConveyer = false;
+        ballCount += tempBallCount;
+        tempBallCount = 0;
       }
-  } else if (ballCount == 3) {
-    //Preload
-  } else if (ballCount == 4) {
-    //Load
+  } else {
+    System.out.println("UH OH");
   }
+
+  
 
   } 
 

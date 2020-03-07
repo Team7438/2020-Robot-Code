@@ -18,6 +18,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 //import frc.robot.commands.Autofront;
 //import frc.robot.commands.CentreHatch;
 import frc.robot.commands.DriveCmd;
+import frc.robot.commands.RotateTurretLeft;
+import frc.robot.commands.RotateTurretRight;
 //import frc.robot.commands.AutoRight1;
 //import frc.robot.commands.AutoRight2;
 //import frc.robot.commands.AutoRight3;
@@ -79,13 +81,16 @@ public class Robot extends TimedRobot {
   public static Boolean isEncoderConnected = false;
   public static Integer EncoderFrequency = 0;
   public static Double EncoderOutput;
-  public static Double EncoderDistance;
+  public static Double YawEncoderDistance;
+  public static Double PitchEncoderDistance;
   public static LoaderSub loader = new LoaderSub();
   public NetworkTableEntry targetYaw;
   public NetworkTableEntry isDriverMode;
   public NetworkTableEntry isValid;
   public static Integer distance0=5;
   public static Integer distance1=6;
+
+  
 
   // public static CargoLoader cargoLoader = new CargoLoader();
   // public static HatchRelease hatchRelease = new HatchRelease();
@@ -99,6 +104,7 @@ public class Robot extends TimedRobot {
   public Command drivingCmd = new DriveCmd();
   // Encoder
   public final DutyCycleEncoder m_dutyCycleEncoder = new DutyCycleEncoder(4);
+  
   // Lidar
   public final LIDARLite m_distanceSensor = new LIDARLite(I2C.Port.kOnboard);
 
@@ -140,7 +146,8 @@ public class Robot extends TimedRobot {
 
     m_dutyCycleEncoder.setDistancePerRotation(360);
     m_dutyCycleEncoder.reset();
-    m_distanceSensor.startMeasuring();
+
+    
 
     NetworkTable MicrosoftCam = NetworkTableInstance.getDefault().getTable("chameleon-vision");
     
@@ -215,14 +222,18 @@ public class Robot extends TimedRobot {
     isEncoderConnected = m_dutyCycleEncoder.isConnected();
     EncoderFrequency = m_dutyCycleEncoder.getFrequency();
     EncoderOutput = m_dutyCycleEncoder.get();
-    EncoderDistance = m_dutyCycleEncoder.getDistance();
+    YawEncoderDistance = m_dutyCycleEncoder.getDistance();
+
+    
 
 
     SmartDashboard.putBoolean("Connected", isEncoderConnected);
-    SmartDashboard.putNumber("TurretDistance", EncoderDistance);
+    SmartDashboard.putNumber("TurretDistance", YawEncoderDistance);
     SmartDashboard.putNumber("Lidar Distance", m_distanceSensor.getDistance());
     SmartDashboard.putNumber("targetYaw", targetYaw.getDouble(0.0));
     SmartDashboard.putBoolean("isValid", isValid.getBoolean(false));
+
+    
 
     
 

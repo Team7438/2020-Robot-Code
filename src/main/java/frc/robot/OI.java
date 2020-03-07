@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import frc.robot.commands.Lidar;
 import frc.robot.commands.LoadCmd;
+import frc.robot.commands.ManualPitchControlCmd;
+import frc.robot.commands.ManualYawControlCmd;
 import frc.robot.commands.PitchDownCmd;
 import frc.robot.commands.PitchUpCmd;
 import frc.robot.commands.BallCountCmd;
@@ -42,6 +44,8 @@ public class OI {
   // Button button = new JoystickButton(stick, buttonNumber);
   public Joystick joystickZero = new Joystick(0);
   public Joystick joystickOne = new Joystick(1);
+  public Joystick blackButtons = new Joystick(4);
+  public Joystick whiteButtons = new Joystick(5);
   // There are a few additional built in buttons you can use. Additionally,
   // by subclassing Button you can create custom triggers and bind those to
   // commands the same as any other Button.
@@ -71,6 +75,20 @@ public class OI {
   public Button alteleven = new JoystickButton(joystickOne, 11);
   public Button alttwelve = new JoystickButton(joystickOne, 12);
 
+  public Button blackOne = new JoystickButton(blackButtons, 1);
+  public Button blackTwo = new JoystickButton(blackButtons, 2);
+  public Button blackThree = new JoystickButton(blackButtons, 3);
+  public Button blackFour = new JoystickButton(blackButtons, 4);
+  public Button blackFive = new JoystickButton(blackButtons, 5);
+  public Button blackSix = new JoystickButton(blackButtons, 6);
+
+  public Button whiteOne = new JoystickButton(whiteButtons, 1);
+  public Button whiteTwo = new JoystickButton(whiteButtons, 2);
+  public Button whiteThree = new JoystickButton(whiteButtons, 3);
+  public Button whiteFour = new JoystickButton(whiteButtons, 4);
+  public Button whiteFive = new JoystickButton(whiteButtons, 5);
+  public Button whiteSix = new JoystickButton(whiteButtons, 6);
+
   // public double joyOneVal = Robot.m_oi.joystickOne.getX();
 
   //// TRIGGERING COMMANDS WITH BUTTONS
@@ -79,20 +97,25 @@ public class OI {
 
   public OI() {
     // Current
-    eight.whenPressed(new LoadCmd());
-    seven.whileHeld(new IntakeToggle());
-    three.whileHeld(new RotateTurretLeft());
-    four.whileHeld(new RotateTurretRight());
-    nine.whenPressed(new AutoRunTarget());
-    ten.whenPressed(new CenterTurretCmd());
-    five.whileHeld(new ConveyerInCmd());
-    six.whileHeld(new ConveyerOutCmd());
+    
+    blackOne.whenPressed(new ShooterPistonCmd());
+    blackTwo.whenPressed(new LoadCmd());
+    blackThree.toggleWhenPressed(new ShooterMotorsCmd());
+    //blackFour Gyro target switching
+    blackFive.whileHeld(new ConveyerInCmd());
+    blackSix.whenPressed(new CenterTurretCmd());
 
-    // eleven.whileHeld(new PitchDownCmd());
-    // twelve.whileHeld(new PitchUpCmd());
-    // thumb.whileHeld(new ShooterMotorsCmd());
-    // trigger.whenPressed(new ShooterPistonCmd());
-    eleven.whenPressed(new BallCountCmd());
+    //Was whiteOne
+    eleven.toggleWhenPressed(new IntakeToggle());
+    whiteTwo.whenPressed(new AutoRunTarget());
+    whiteThree.whileHeld(new ConveyerOutCmd());
+    //whiteFour
+    whiteFive.toggleWhenPressed(new ManualPitchControlCmd());
+    whiteSix.toggleWhenPressed(new ManualYawControlCmd());
+
+    thumb.toggleWhenPressed(new ShooterMotorsCmd());
+    trigger.whenPressed(new ShooterPistonCmd());
+    //eleven.whenPressed(new BallCountCmd()); 
 
 
 

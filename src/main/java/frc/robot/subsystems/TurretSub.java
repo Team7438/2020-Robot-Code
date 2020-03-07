@@ -7,6 +7,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotMap;
@@ -21,8 +22,19 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 public class TurretSub extends Subsystem {
     public static VictorSPX turretYaw = new VictorSPX(RobotMap.turretYaw);
-    // Turret speed
-    private static double turretSpeed = 0.2;
+    public static Joystick blackButtons = new Joystick(4);
+  // Turret speed
+  private static double turretSpeed = 0.29;
+
+  public static void ManualControlYaw() {
+    if (blackButtons.getRawAxis(0) >= 0.9) {
+      RotateRight();
+    } else if (blackButtons.getRawAxis(0) <= -0.9) {
+      RotateLeft();
+    } else {
+      stopRotate();
+    }
+  }
 
   public static void RotateLeft() {
     if (SmartDashboard.getNumber("TurretDistance", 0) <= -730) {
@@ -66,6 +78,8 @@ public class TurretSub extends Subsystem {
   public static void stopRotate() {
     turretYaw.set(ControlMode.PercentOutput, 0);
   }
+
+  
 
   
   @Override
