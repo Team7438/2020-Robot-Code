@@ -99,15 +99,15 @@ public class BallManagementSub extends Subsystem {
     } else if (speed == 2) {
       // 0.04 EU per LU
       //System.out.println((currentEncoder - lastEncoder));
-      if ((Math.abs(currentEncoder - lastEncoder)) > 0.07) {
+      if ((Math.abs(currentEncoder - lastEncoder)) > 0.05) {
         // decrease power
         lastEncoder = turret_dutyCycleEncoder.getDistance();
         powerToReturn = (-(Math.abs(currentEncoder - lastEncoder)) / 0.1);
         return powerToReturn;
-      } else if (((Math.abs(currentEncoder - lastEncoder)) < 0.05)) {
+      } else if (((Math.abs(currentEncoder - lastEncoder)) < 0.03)) {
         // increase power
         lastEncoder = turret_dutyCycleEncoder.getDistance();
-        powerToReturn = (0.06-(Math.abs(currentEncoder - lastEncoder)));
+        powerToReturn = ((0.06-(Math.abs(currentEncoder - lastEncoder)))/2);
         //System.out.println(powerToReturn);
         return powerToReturn;
       } else {
@@ -143,6 +143,7 @@ public class BallManagementSub extends Subsystem {
     if (power < 0.05) {
       power = 0.05;
     }
+    System.out.println(-power);
   turretPitch.set(ControlMode.PercentOutput, -power);
 }
 

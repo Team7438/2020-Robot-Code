@@ -52,7 +52,7 @@ public class Shooter {
     double FOV_h_ver = -1.0; // 23/20
 
     // manual calibration: at distance calibDist
-    double calibDist = -1.0; // meters
+    double calibDist = -3.44; // meters
     double calibLenX = -100;
     double calibLenY = -50;
 
@@ -192,8 +192,8 @@ public class Shooter {
         if (HD_format) { // HD ratio
             // shooter axis offset
             if (camera_id == 0) {  // camera.0 is to the left, camera.1 to the right
-                calibLenX = -100;
-                calibLenY = -50;
+                calibLenX = -60;
+                calibLenY = -2;
             } else {
                 calibLenX = 100;
                 calibLenY = -50;
@@ -204,8 +204,8 @@ public class Shooter {
         } else { // 0.75 ratio
             // shooter axis offset
             if (camera_id == 0) {
-                calibLenX = -100;
-                calibLenY = -100;
+                calibLenX = -60;
+                calibLenY = -2;
             } else {
                 calibLenX = 100;
                 calibLenY = -100;
@@ -238,6 +238,7 @@ public class Shooter {
         // targetPose[0] is distance to the target in meters as provided by Chameleon
         double[] pose   = chameleon_table.getEntry("targetPose").getDoubleArray(new double[]{ -1.0, -1.0, -1.0 });
         double distance = pose[0];
+        distance = 3.44;
         boolean targetVisible = true;
         if(pose[0] == 0.0 && pose[1] == 0.0) targetVisible = false;
         if( ! targetVisible) distance = 2.0;
@@ -342,7 +343,7 @@ public class Shooter {
         // System.out.println("drop: " + drop);
 
         // TODO: override with a constant, for debugging
-        ballisticTarget.y += 150;  // harcoded ballistic offset, in pixels
+        ballisticTarget.y += 0;  // harcoded ballistic offset, in pixels
 
         return ballisticTarget;
     }

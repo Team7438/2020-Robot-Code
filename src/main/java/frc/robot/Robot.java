@@ -113,8 +113,8 @@ public class Robot extends TimedRobot {
 
  
   //Uncomment for correct connecton to shooter0 camera and delta feed
-  //public static Shooter shooter0 = new Shooter(0, "New Camera", "http://10.74.38.11:1181/?action=stream");
-  public static Shooter shooter0 = new Shooter(0, "New Camera", "http://raspberrypi.local:1181/?action=stream");
+  public static Shooter shooter0 = new Shooter(0, "New Camera", "http://10.74.38.11:1181/?action=stream");
+  //public static Shooter shooter0 = new Shooter(0, "New Camera", "http://raspberrypi.11:1181/?action=stream");
   
   // public static PIDElevator pIDElevatorWinch = new PIDElevator();
   // public static DoubleSolenoid hatchPusher = new
@@ -136,6 +136,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+    m_distanceSensor.startMeasuring();
 
     //2m distance sensor - Not Working
     //distSens = new Rev2mDistanceSensor(Port.kMXP);
@@ -223,8 +224,6 @@ public class Robot extends TimedRobot {
     EncoderFrequency = m_dutyCycleEncoder.getFrequency();
     EncoderOutput = m_dutyCycleEncoder.get();
     YawEncoderDistance = m_dutyCycleEncoder.getDistance();
-
-    
 
 
     SmartDashboard.putBoolean("Connected", isEncoderConnected);
