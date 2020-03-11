@@ -62,4 +62,7 @@ public class RobotMap {
   //Shooter Wheels
   public static int shooterWheel1 = 6;
   public static int shooterWheel2 = 7;
+
+  //Lidar DIO Port for PWM Operation
+  public static int LIDAR_PORT = 8;
 }

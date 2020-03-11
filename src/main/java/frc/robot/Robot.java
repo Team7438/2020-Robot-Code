@@ -30,6 +30,7 @@ import frc.robot.commands.RotateTurretRight;
 //import frc.robot.commands.ResetElevatorEncoderCommand;
 import frc.robot.subsystems.DriveSub;
 import frc.robot.subsystems.LoaderSub;
+import frc.robot.subsystems.LIDARSubsystem;
 import frc.robot.MultiplexedColorSensor;
 //import frc.robot.subsystems.ElevatorTilt;
 //import frc.robot.subsystems.ElevatorWinch;
@@ -57,6 +58,8 @@ import com.revrobotics.Rev2mDistanceSensor;
 import com.revrobotics.ColorMatchResult;
 import edu.wpi.first.wpilibj.util.Color;
 
+import edu.wpi.first.wpilibj.Counter;
+
 //import com.revrobotics.Rev2mDistanceSensor.Port;
 //import com.revrobotics.Rev2mDistanceSensor.RangeProfile;
 
@@ -73,7 +76,8 @@ public class Robot extends TimedRobot {
   //TEMP DELETE LATER
   
   //END TEMP
-
+ 
+  private Counter m_LIDAR;
 
   public static final String MecanumDriver = null;
   public static OI m_oi;
@@ -90,7 +94,7 @@ public class Robot extends TimedRobot {
   public static Integer distance0=5;
   public static Integer distance1=6;
 
-  
+  //public static LIDARSubsystem lidarSubsystem = new LIDARSubsystem();
 
   // public static CargoLoader cargoLoader = new CargoLoader();
   // public static HatchRelease hatchRelease = new HatchRelease();
@@ -105,8 +109,10 @@ public class Robot extends TimedRobot {
   // Encoder
   public final DutyCycleEncoder m_dutyCycleEncoder = new DutyCycleEncoder(4);
   
-  // Lidar
-  public final LIDARLite m_distanceSensor = new LIDARLite(I2C.Port.kOnboard);
+// Lidar using onboard I2C
+ //public final LIDARLite m_distanceSensor = new LIDARLite(I2C.Port.kOnboard);
+ //Lidar using MXP I2C
+ public final LIDARLite m_distanceSensor = new LIDARLite(I2C.Port.kMXP);
 
   
   
@@ -143,6 +149,13 @@ public class Robot extends TimedRobot {
     //distSens.setAutomaticMode(true);
     //distSens.setRangeProfile(RangeProfile.kHighSpeed);
     
+    // LIDAR Code for PWM - going back to I2C on MXP
+    //m_LIDAR = new Counter(8); //plug the lidar into PWM 8
+    //m_LIDAR.setMaxPeriod(1.00); //set the max period that can be measured
+    //m_LIDAR.setSemiPeriodMode(true); //Set the counter to period measurement
+    //m_LIDAR.reset();
+
+
     m_oi = new OI();
 
     m_dutyCycleEncoder.setDistancePerRotation(360);
@@ -215,6 +228,8 @@ public class Robot extends TimedRobot {
    * <p>This runs after the mode specific periodic functions, but before
    * LiveWindow and SmartDashboard integrated updating.
    */
+  final double off  = 0; //offset for sensor. test with tape measure
+
   @Override
   public void robotPeriodic() {
     Scheduler.getInstance().run();
@@ -225,6 +240,15 @@ public class Robot extends TimedRobot {
     EncoderOutput = m_dutyCycleEncoder.get();
     YawEncoderDistance = m_dutyCycleEncoder.getDistance();
 
+    // Code for PWM LIDAR - going back to I2C on MXP
+    //double dist;
+    //System.out.println(m_LIDAR.get());
+    //if(m_LIDAR.get() < 1)
+    //  dist = 0;
+    //else
+    //  dist = (m_LIDAR.getPeriod()*1000000.0/10.0) - off; //convert to distance. sensor is high 10 us for every centimeter. 
+    //
+    //  SmartDashboard.putNumber("LIDAR Distance PWM 3", dist); //put the distance on the dashboard
 
     SmartDashboard.putBoolean("Connected", isEncoderConnected);
     SmartDashboard.putNumber("TurretDistance", YawEncoderDistance);

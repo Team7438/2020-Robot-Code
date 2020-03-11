@@ -12,7 +12,9 @@ import edu.wpi.first.wpilibj.I2C;
 
 public class Lidar extends Command {
 
-  private final LIDARLite m_distanceSensor = new LIDARLite(I2C.Port.kOnboard);
+  //private final LIDARLite m_distanceSensor = new LIDARLite(I2C.Port.kOnboard);  
+  //private final LIDARLite m_distanceSensor = new LIDARLite(I2C.Port.kMXP);  
+
 
 
   public Lidar() {
@@ -25,14 +27,17 @@ public class Lidar extends Command {
   @Override
   protected void initialize() {
     
-    m_distanceSensor.startMeasuring();
+    //m_distanceSensor.startMeasuring();
       
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    // int distance = LIDARLite.getDistance();
+    //int distance = LIDARLite.getDistance();
+    //m_distanceSensor.startMeasuring();
+    //int distance = m_distanceSensor.getDistance();
+    //m_distanceSensor.stopMeasuring();
   }
 
   // Make this return true when this Command no longer needs to run execute()
@@ -44,13 +49,13 @@ public class Lidar extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    m_distanceSensor.stopMeasuring();
+    //m_distanceSensor.stopMeasuring();
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    m_distanceSensor.stopMeasuring();
+    //m_distanceSensor.stopMeasuring();
   }
 }

@@ -107,15 +107,15 @@ public class OI {
 
     //Was whiteOne
     eleven.toggleWhenPressed(new IntakeToggle());
+    
     whiteTwo.whenPressed(new AutoRunTarget());
     whiteThree.whileHeld(new ConveyerOutCmd());
-    //whiteFour
+    whiteFour.whenPressed(new BallCountCmd()); 
     whiteFive.toggleWhenPressed(new ManualPitchControlCmd());
     whiteSix.toggleWhenPressed(new ManualYawControlCmd());
 
     thumb.toggleWhenPressed(new ShooterMotorsCmd());
     trigger.whenPressed(new ShooterPistonCmd());
-    //eleven.whenPressed(new BallCountCmd()); 
 
 
 

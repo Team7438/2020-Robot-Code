@@ -282,7 +282,7 @@ public class Shooter {
         // when it approaches (0,0) it's time to shoot ...
         shooterDelta.x = targetYaw - ballisticYaw;
         shooterDelta.y = targetPitch - ballisticPitch;
-        System.out.println("shooterDelta:" + shooterDelta.toString());
+        //System.out.println("shooterDelta:" + shooterDelta.toString());
 
         isValid = chameleon_table.getEntry("isValid").getBoolean(false);
 

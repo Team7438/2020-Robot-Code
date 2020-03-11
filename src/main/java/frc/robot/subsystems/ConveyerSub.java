@@ -21,13 +21,13 @@ public class ConveyerSub extends Subsystem {
     public static VictorSPX conveyer2 = new VictorSPX(RobotMap.Conveyer2);
 
   public static void Rollin() {
-    conveyer1.set(ControlMode.PercentOutput, -0.15);
-    conveyer2.set(ControlMode.PercentOutput, 0.15);
+    conveyer1.set(ControlMode.PercentOutput, -0.25);
+    conveyer2.set(ControlMode.PercentOutput, 0.25);
   }
 
   public static void Rollout(){
-    conveyer1.set(ControlMode.PercentOutput, 0.15);
-    conveyer2.set(ControlMode.PercentOutput, -0.15);
+    conveyer1.set(ControlMode.PercentOutput, 0.2);
+    conveyer2.set(ControlMode.PercentOutput, -0.2);
   }
 
   public static void RollStop(){
