@@ -19,6 +19,10 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.SPI;
 import frc.robot.Robot;
@@ -45,35 +49,27 @@ public class DriveSub extends Subsystem {
   public double rateLeft;
   public double avgDistance;
   public double turningValue;
-  // public static PWMVictorSPX leftOne = new PWMVictorSPX(RobotMap.left1);
   public static WPI_VictorSPX leftOne = new WPI_VictorSPX(RobotMap.left1);
-  // public static PWMVictorSPX leftTwo = new PWMVictorSPX(RobotMap.left2);
   public static WPI_VictorSPX leftTwo = new WPI_VictorSPX(RobotMap.left2);
-  // OLD public static SpeedControllerGroup Gleft = new
-  // SpeedControllerGroup(leftOne, leftTwo);
   public double angle;
   public float roll;
   public float pitch;
   public double gyro;
   public static double kP = 0.15;
-  // public static PWMVictorSPX rightOne = new PWMVictorSPX(RobotMap.right1);
   public static WPI_VictorSPX rightOne = new WPI_VictorSPX(RobotMap.right1);
-  // public static PWMVictorSPX rightTwo = new PWMVictorSPX(RobotMap.right2);
   public static WPI_VictorSPX rightTwo = new WPI_VictorSPX(RobotMap.right2);
-  // OLD public static SpeedControllerGroup Gright = new
+  private final DifferentialDriveOdometry m_odometry;
 
   static SpeedControllerGroup m_left = new SpeedControllerGroup(leftOne, leftTwo);
   static SpeedControllerGroup m_right = new SpeedControllerGroup(rightOne, rightTwo);
 
   public static final DifferentialDrive DriveBase = new DifferentialDrive(m_left, m_right);
 
-  // SpeedControllerGroup(rightOne, rightTwo);
   public static Encoder m_encoderRight = new Encoder(RobotMap.rightEncoderPort1, RobotMap.rightEncoderPort2, false,
       Encoder.EncodingType.k4X);
   public static Encoder m_encoderLeft = new Encoder(RobotMap.leftEncoderPort1, RobotMap.leftEncoderPort2, true,
       Encoder.EncodingType.k4X);
-  // OLD public static final DifferentialDrive DriveBase = new
-  // DifferentialDrive(Gleft, Gright);
+
   public double minTurnSpeed = .45;
   public double zValue;
   public double yValue;
@@ -88,7 +84,6 @@ public class DriveSub extends Subsystem {
   public static double rightPower;
   // public static ADXRS450_Gyro Gyro = new ADXRS450_Gyro();
   public static AHRS Gyro = new AHRS(SPI.Port.kMXP);
-    // Run motors in parallel
 
     public static void arcadeDrive(double xSpeed, double zRotation) {
       if (!disableDrive) {
@@ -99,7 +94,7 @@ public class DriveSub extends Subsystem {
     }
 
     public void robotDriver(Joystick joystickZero){
-      // Experimental throttle curbve stuff -- Originall arcadeDeive line is below (commented out)
+      // Experimental throttle curve stuff -- Originall arcadeDeive line is below (commented out)
       yValue=joystickZero.getY();
       zValue=joystickZero.getZ();
       
@@ -123,7 +118,7 @@ public class DriveSub extends Subsystem {
       //zAdjustedValue=zValue;
       //Used to be adjusted value, changed to yValue to make it faster.
       if (!disableDrive) {
-        DriveBase.arcadeDrive(yValue * -1, zValue/1.25);
+        DriveBase.arcadeDrive(yValue * -1, zValue/1.25); 
       } else {
         DriveBase.arcadeDrive(0, 0);
       }
@@ -141,6 +136,9 @@ public class DriveSub extends Subsystem {
     public double paddleTuner(){
       return Robot.m_oi.joystickZero.getRawAxis(3);
     }
+
+    
+
   
     public void encoderInit(){
       m_encoderRight.setDistancePerPulse((Math.PI * 6) / 1024);
@@ -169,6 +167,68 @@ public class DriveSub extends Subsystem {
   
     public void gyroReset(){
       Gyro.reset();
+    }
+
+
+    //New code for trajectory following
+
+    @Override
+    public void periodic() {
+      // Update the odometry in the periodic block
+      m_odometry.update(Rotation2d.fromDegrees(getHeading()), m_encoderLeft.getDistance(),
+                        m_encoderRight.getDistance());
+    }
+
+    public Pose2d getPose() {
+      return m_odometry.getPoseMeters();
+    }
+
+    public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+      return new DifferentialDriveWheelSpeeds(m_encoderLeft.getRate(), m_encoderRight.getRate());
+    }
+
+    public void resetEncoders() {
+      m_encoderLeft.reset();
+      m_encoderRight.reset();
+    }
+
+    public double getAverageEncoderDistance() {
+      return (m_encoderLeft.getDistance() + m_encoderRight.getDistance()) / 2.0;
+    }
+
+    public Encoder getLeftEncoder() {
+      return m_encoderLeft;
+    }
+
+    public Encoder getRightEncoder() {
+      return m_encoderRight;
+    }
+
+    public void resetOdometry(Pose2d pose) {
+      resetEncoders();
+      m_odometry.resetPosition(pose, Rotation2d.fromDegrees(getHeading()));
+    }
+
+    public void tankDriveVolts(double leftVolts, double rightVolts) {
+      m_left.setVoltage(leftVolts);
+      m_right.setVoltage(-rightVolts);
+      DriveBase.feed();
+    }
+
+    public void setMaxOutput(double maxOutput) {
+      DriveBase.setMaxOutput(maxOutput);
+    }
+
+    public double getHeading() {
+      return Math.IEEEremainder(Gyro.getAngle(), 360) * (1.0);
+    }
+
+    public void zeroHeading() {
+      Gyro.reset();
+    }
+
+    public double getTurnRate() {
+      return Gyro.getRate() * (1.0);
     }
   
     public void gyroUpdate(){
