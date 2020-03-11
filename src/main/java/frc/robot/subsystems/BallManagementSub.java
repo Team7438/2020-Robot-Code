@@ -57,9 +57,9 @@ public class BallManagementSub extends Subsystem {
   public Boolean isForward = true;
   public static Double tempPower = 0.0;
   public static Double power = 0.0;
-  public static Double lastEncoder = 0.0;
   public static Double currentEncoder = 0.0;
   public static Double powerToReturn = 0.0;
+  public static Boolean flipped = false;
 
   // 50 loop units per second
   // 4 EU per 50 LU
@@ -86,38 +86,6 @@ public class BallManagementSub extends Subsystem {
     turret_dutyCycleEncoder.reset();
   }
 
-  public static Double getPowerToMove(Integer speed) {
-    // Returns change in power
-    currentEncoder = turret_dutyCycleEncoder.getDistance();
-
-    // Speed 1: slow
-    // Speed 2: medium
-    // Speed 3: fast
-    // Speed 4: flippin fast
-    if (speed == 1) {
-      return 0.0;
-    } else if (speed == 2) {
-      // 0.04 EU per LU
-      //System.out.println((currentEncoder - lastEncoder));
-      if ((Math.abs(currentEncoder - lastEncoder)) > 0.05) {
-        // decrease power
-        lastEncoder = turret_dutyCycleEncoder.getDistance();
-        powerToReturn = (-(Math.abs(currentEncoder - lastEncoder)) / 0.1);
-        return powerToReturn;
-      } else if (((Math.abs(currentEncoder - lastEncoder)) < 0.03)) {
-        // increase power
-        lastEncoder = turret_dutyCycleEncoder.getDistance();
-        powerToReturn = ((0.06-(Math.abs(currentEncoder - lastEncoder)))/2);
-        //System.out.println(powerToReturn);
-        return powerToReturn;
-      } else {
-        lastEncoder = turret_dutyCycleEncoder.getDistance();
-        return 0.0;
-      }
-    } else {
-      return 0.0;
-    }
-  }
 
   public static void shooterPistonOut() {
     shooterSole.set(true);
@@ -133,32 +101,54 @@ public class BallManagementSub extends Subsystem {
     // setDefaultCommand(new MySpecialCommand());
   }
 
-  public static void pitchUp() {
-    tempPower = getPowerToMove(2);
-    power += tempPower;
-    if (power > 0.75) {
-      power = 0.75;
-    }
+  public static Double getEncoderValue() {
+    return currentEncoder = turret_dutyCycleEncoder.getDistance() + 1000;
+    //Returns the turret pitch encoder value, adjusted to always be positive.
+  }
 
-    if (power < 0.05) {
-      power = 0.05;
+  public static void pitchUp() {
+    if (!flipped) {
+      turretPitch.set(ControlMode.PercentOutput, -0.7);
+    } else {
+      turretPitch.set(ControlMode.PercentOutput, -0.1);
     }
-    System.out.println(-power);
-  turretPitch.set(ControlMode.PercentOutput, -power);
+  
 }
 
 public static void pitchDown() {
-  tempPower = getPowerToMove(2);
-    power += tempPower;
-    if (power > 0.15) {
-      power = 0.15;
-    }
+  if (!flipped) {
+    turretPitch.set(ControlMode.PercentOutput, 0.1);
+  } else {
+    turretPitch.set(ControlMode.PercentOutput, 0.7);
+  }
+}
 
-    if (power < 0.05) {
-      power = 0.05;
-    }
+public static void goToPosition(Integer position) {
+  //Pitch up until overshoot, then, slowly move down. Allow large margin of error
+  switch (position) {
+    case 1:
+      //Lower dump
+      break;
+    
+    case 2:
+      //Close
+      break;
 
-  turretPitch.set(ControlMode.PercentOutput, power);
+    case 3:
+      //Mid range
+      break;
+
+    case 4:
+      //long range
+      break;
+
+    case 5:
+      //Very close range
+      break;
+  
+    default:
+      break;
+  }
 }
 
 public static void stopPitch() {
