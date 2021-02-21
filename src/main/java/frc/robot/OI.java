@@ -44,8 +44,8 @@ public class OI {
   // Button button = new JoystickButton(stick, buttonNumber);
   public Joystick joystickZero = new Joystick(0);
   public Joystick joystickOne = new Joystick(1);
-  public Joystick blackButtons = new Joystick(4);
-  public Joystick whiteButtons = new Joystick(5);
+  //public Joystick blackButtons = new Joystick(4);
+  //public Joystick whiteButtons = new Joystick(5);
   // There are a few additional built in buttons you can use. Additionally,
   // by subclassing Button you can create custom triggers and bind those to
   // commands the same as any other Button.
@@ -75,19 +75,19 @@ public class OI {
   public Button alteleven = new JoystickButton(joystickOne, 11);
   public Button alttwelve = new JoystickButton(joystickOne, 12);
 
-  public Button blackOne = new JoystickButton(blackButtons, 1);
-  public Button blackTwo = new JoystickButton(blackButtons, 2);
-  public Button blackThree = new JoystickButton(blackButtons, 3);
-  public Button blackFour = new JoystickButton(blackButtons, 4);
-  public Button blackFive = new JoystickButton(blackButtons, 5);
-  public Button blackSix = new JoystickButton(blackButtons, 6);
+  //public Button blackOne = new JoystickButton(blackButtons, 1);
+  //public Button blackTwo = new JoystickButton(blackButtons, 2);
+  //public Button blackThree = new JoystickButton(blackButtons, 3);
+  //public Button blackFour = new JoystickButton(blackButtons, 4);
+  //public Button blackFive = new JoystickButton(blackButtons, 5);
+  //public Button blackSix = new JoystickButton(blackButtons, 6);
 
-  public Button whiteOne = new JoystickButton(whiteButtons, 1);
-  public Button whiteTwo = new JoystickButton(whiteButtons, 2);
-  public Button whiteThree = new JoystickButton(whiteButtons, 3);
-  public Button whiteFour = new JoystickButton(whiteButtons, 4);
-  public Button whiteFive = new JoystickButton(whiteButtons, 5);
-  public Button whiteSix = new JoystickButton(whiteButtons, 6);
+  //public Button whiteOne = new JoystickButton(whiteButtons, 1);
+  //public Button whiteTwo = new JoystickButton(whiteButtons, 2);
+  //public Button whiteThree = new JoystickButton(whiteButtons, 3);
+  //public Button whiteFour = new JoystickButton(whiteButtons, 4);
+  //public Button whiteFive = new JoystickButton(whiteButtons, 5);
+  //public Button whiteSix = new JoystickButton(whiteButtons, 6);
 
   // public double joyOneVal = Robot.m_oi.joystickOne.getX();
 
@@ -97,22 +97,27 @@ public class OI {
 
   public OI() {
     // Current 2021
-    
-    blackOne.whenPressed(new ShooterPistonCmd());
-    blackTwo.whenPressed(new LoadCmd());
-    blackThree.toggleWhenPressed(new ShooterMotorsCmd());
-    //blackFour Gyro target switching
-    blackFive.whileHeld(new ConveyerInCmd());
-    blackSix.whenPressed(new CenterTurretCmd());
+    altone.toggleWhenPressed(new ManualPitchControlCmd());
+    alttwo.toggleWhenPressed(new ManualYawControlCmd());
+
+    //blackOne.whenPressed(new ShooterPistonCmd());
+    //blackTwo.whenPressed(new LoadCmd());
+    //blackThree.toggleWhenPressed(new ShooterMotorsCmd());
+    /////blackFour Gyro target switching
+    //blackFive.whileHeld(new ConveyerInCmd());
+    //blackSix.whenPressed(new CenterTurretCmd());
 
     //Was whiteOne
+    seven.whileHeld(new ConveyerOutCmd());
+    eight.whileHeld(new ConveyerInCmd());
+    five.whenPressed(new LoadCmd());
     eleven.toggleWhenPressed(new IntakeToggle());
     
-    whiteTwo.whenPressed(new AutoRunTarget());
-    whiteThree.whileHeld(new ConveyerOutCmd());
-    whiteFour.whenPressed(new BallCountCmd()); 
-    whiteFive.toggleWhenPressed(new ManualPitchControlCmd());
-    whiteSix.toggleWhenPressed(new ManualYawControlCmd());
+    //whiteTwo.whenPressed(new AutoRunTarget());
+    //whiteThree.whileHeld(new ConveyerOutCmd());
+    //whiteFour.whenPressed(new BallCountCmd()); 
+    //whiteFive.toggleWhenPressed(new ManualPitchControlCmd());
+    //whiteSix.toggleWhenPressed(new ManualYawControlCmd());
 
     thumb.toggleWhenPressed(new ShooterMotorsCmd());
     trigger.whenPressed(new ShooterPistonCmd());

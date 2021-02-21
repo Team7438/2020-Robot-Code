@@ -22,7 +22,7 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 public class TurretSub extends Subsystem {
     public static VictorSPX turretYaw = new VictorSPX(RobotMap.turretYaw);
-    public static Joystick blackButtons = new Joystick(4);
+    public static Joystick blackButtons = new Joystick(1);
   // Turret speed
   private static double turretSpeed = 0.29;
 

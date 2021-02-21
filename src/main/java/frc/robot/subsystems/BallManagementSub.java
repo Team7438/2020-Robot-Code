@@ -52,7 +52,7 @@ public class BallManagementSub extends Subsystem {
   public static TalonSRX shooterWheel2 = new TalonSRX(RobotMap.shooterWheel2);
 
   public final static DutyCycleEncoder turret_dutyCycleEncoder = new DutyCycleEncoder(9);
-  public static Joystick blackButtons = new Joystick(4);
+  public static Joystick blackButtons = new Joystick(1);
 
   public Boolean isForward = true;
   public static Double tempPower = 0.0;
